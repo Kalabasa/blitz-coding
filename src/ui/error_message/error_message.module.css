@@ -1,0 +1,19 @@
+@value easeOut from "~ui/styles/animation.module.css";
+@value failureColor from "~ui/styles/colors.module.css";
+
+.container {
+  position: absolute;
+  bottom: 0;
+  padding: 12px;
+  width: 100%;
+  background: failureColor;
+  color: white;
+  box-sizing: border-box;
+  animation: slideUp 0.4s easeOut;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+}

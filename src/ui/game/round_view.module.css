@@ -1,0 +1,45 @@
+@value ease from "~ui/styles/animation.module.css";
+
+.cardContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 600px;
+  transition: transform 1s ease, filter 0.6s linear;
+  transform-style: preserve-3d;
+}
+
+.farPrevCard {
+  transform: translate(-50%, -50%) translate3d(-1920px, 0, -672px) rotateY(270deg) scale(0);
+  transition-delay: 0s;
+}
+
+.prevPrevCard {
+  transform: translate(-50%, -50%) translate3d(-1248px, 0, -336px) rotateY(250deg);
+  transition-delay: 0.06s;
+}
+
+.prevCard {
+  transform: translate(-50%, -50%) translate3d(-660px, 0, -288px) rotateY(220deg);
+  transition-delay: 0.12s;
+}
+
+.currentCard {
+  transform: translate(-50%, -50%) translate3d(0, 0, 0);
+  transition-delay: 0.18s;
+}
+
+.nextCard {
+  transform: translate(-50%, -50%) translate3d(660px, 0, -288px) rotateY(140deg);
+  transition-delay: 0.24s;
+}
+
+.nextNextCard {
+  transform: translate(-50%, -50%) translate3d(1248px, 0, -336px) rotateY(110deg);
+  transition-delay: 0.3s;
+}
+
+.farNextCard {
+  transform: translate(-50%, -50%) translate3d(1920px, 0, -672px) rotateY(90deg) scale(0);
+  transition-delay: 0.36s;
+}

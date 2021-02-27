@@ -1,0 +1,26 @@
+@value textColor from "~ui/styles/colors.module.css";
+@value accentColor from "~ui/styles/colors.module.css";
+
+.svg {
+  fill: textColor;
+  stroke-width: 0;
+}
+
+.svg.emoji {
+  position: relative;
+  top: 0.2645em;
+  height: 1em;
+  fill: currentColor;
+}
+
+.svg.logo {
+  fill: accentColor;
+}
+
+.svg.colored {
+  fill: currentColor;
+}
+
+.svg.filled {
+  fill: currentColor;
+}

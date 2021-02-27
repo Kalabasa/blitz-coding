@@ -1,0 +1,32 @@
+@value puzzleGraphicsSecondaryColor from "~ui/styles/colors.module.css";
+@value puzzleGraphicsTertiaryColor from "~ui/styles/colors.module.css";
+
+.border {
+  margin: -0.5px;
+  padding: 0.5px;
+  border: solid 1px puzzleGraphicsTertiaryColor;
+  overflow: hidden;
+}
+
+.border.disableBottomRight {
+  border-bottom-width: 0;
+  border-right-width: 0;
+}
+
+.border.disableTopLeft {
+  border-top-width: 0;
+  border-left-width: 0;
+}
+
+.key {
+  color: puzzleGraphicsSecondaryColor;
+}
+
+.value {
+  font-weight: bold;
+}
+
+.emptyResult {
+  opacity: 0.06;
+  font-weight: bolder;
+}

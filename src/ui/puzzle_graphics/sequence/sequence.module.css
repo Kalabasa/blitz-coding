@@ -1,0 +1,103 @@
+@value easeOut from "~ui/styles/animation.module.css";
+@value expectedColor from "~ui/styles/colors.module.css";
+@value failureColor from "~ui/styles/colors.module.css";
+@value puzzleGraphicsColor from "~ui/styles/colors.module.css";
+@value puzzleGraphicsSecondaryColor from "~ui/styles/colors.module.css";
+@value puzzleGraphicsTertiaryColor from "~ui/styles/colors.module.css";
+
+@value emptyResult from "~ui/puzzle_graphics/graphics.module.css";
+@value key from "~ui/puzzle_graphics/graphics.module.css";
+@value value from "~ui/puzzle_graphics/graphics.module.css";
+
+.container {
+  display: flex;
+  max-width: 80%;
+}
+.container::after {
+  content: "";
+  position: absolute;
+  display: block;
+  right: 0;
+  width: 24px;
+  height: 100%;
+  background: linear-gradient(to left, puzzleGraphicsColor, transparent);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 36px;
+  padding: 6px 6px;
+}
+
+.headers {
+  border-right: solid 1px puzzleGraphicsTertiaryColor;
+  padding-right: 12px;
+  text-align: right;
+}
+
+.numberHeader {
+  composes: cell;
+  composes: key;
+}
+
+.expectationHeader {
+  composes: cell;
+  composes: key;
+}
+
+.subscript {
+  position: relative;
+  top: 0.5em;
+  transform: scale(0.7);
+}
+
+.resultHeader {
+  composes: cell;
+  composes: key;
+}
+
+.itemContainer {
+  position: relative;
+  display: flex;
+  overflow-x: hidden;
+  padding: 0 12px;
+}
+
+.item {
+  position: relative;
+  z-index: 0;
+}
+
+.itemNumber {
+  composes: cell;
+  composes: key;
+}
+
+.expected {
+  composes: cell;
+  composes: value;
+}
+
+.result {
+  composes: cell;
+  composes: value;
+  animation: resultEntrance 0.1s calc(0.03s * var(--caseIndex, 0)) linear
+    backwards;
+}
+
+@keyframes resultEntrance {
+  from {
+    opacity: 0;
+  }
+}
+
+.mark {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  z-index: -1;
+  animation-delay: calc(0.3s + 0.03s * var(--caseIndex, 0));
+}

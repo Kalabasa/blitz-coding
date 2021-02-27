@@ -1,0 +1,153 @@
+@value ease from "~ui/styles/animation.module.css";
+@value successColor from "~ui/styles/colors.module.css";
+@value failureColor from "~ui/styles/colors.module.css";
+@value codeEditorColor from "~ui/styles/colors.module.css";
+@value puzzleGraphicsColor from "~ui/styles/colors.module.css";
+@value puzzleGraphicsPrimaryColor from "~ui/styles/colors.module.css";
+@value cardBackColor from "~ui/styles/colors.module.css";
+@value cardBackMarkColor from "~ui/styles/colors.module.css";
+@value textFilter from "~ui/styles/colors.module.css";
+
+@value cardTopBoxShadow: inset 0 2px 0 rgba(255, 255, 255, 0.09);
+@value cardLeftBoxShadow: inset 2px 0 0 rgba(255, 255, 255, 0.03);
+@value cardRightBoxShadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+@value cardBottomBoxShadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+@value darkenFilter: brightness(0.6);
+
+.puzzleCard {
+  width: 600px;
+}
+
+.puzzleCard.darken {
+  pointer-events: none;
+}
+.puzzleCard.darken .frontface,
+.puzzleCard.darken .backface {
+  filter: darkenFilter;
+}
+.frontface,
+.backface {
+  transition: filter 0.9s 0.2s ease;
+}
+
+.frontface {
+  border-radius: 24px;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.graphicsContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 336px;
+  font-size: 10pt;
+  background: puzzleGraphicsColor;
+  color: puzzleGraphicsPrimaryColor;
+  box-shadow: cardTopBoxShadow, cardLeftBoxShadow, cardRightBoxShadow;
+}
+
+.codeContainer {
+  position: relative;
+  padding: 24px;
+  min-height: 240px;
+  font-size: 12pt;
+  background: codeEditorColor;
+  box-shadow: cardBottomBoxShadow, cardLeftBoxShadow, cardRightBoxShadow;
+  cursor: text;
+}
+
+.extraCode {
+  margin: 0;
+  opacity: 0.4;
+  user-select: none;
+  font-weight: lighter;
+}
+
+.editor {
+  display: flex;
+  justify-content: stretch;
+}
+
+.editor::before {
+  content: "  ";
+  flex: 0 0 auto;
+}
+
+.editor > :global(.code) {
+  flex: 1 1 auto;
+}
+
+.submitButton {
+  display: block;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  margin: 0;
+  padding: 5mm;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  filter: textFilter;
+  transition: transform 0.1s ease;
+}
+.submitButton:hover {
+  transform: translateY(-2px);
+}
+.submitButton:active {
+  transform: scale(0.96);
+}
+
+.waitIcon {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 5mm;
+  opacity: 0.4;
+  filter: textFilter;
+  animation: waitAnimation 1s linear infinite;
+}
+
+@keyframes waitAnimation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.backface {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: cardBackColor;
+  color: cardBackMarkColor;
+  box-shadow: cardTopBoxShadow, cardBottomBoxShadow, cardLeftBoxShadow,
+    cardRightBoxShadow;
+  overflow: hidden;
+  backface-visibility: hidden;
+  transform: rotateY(180deg) translate3d(0, 0, -0.5px);
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  top: 65%;
+  width: 60px;
+  transform: translate(-50%, -50%);
+}
+
+.puzzleCard.success .logo {
+  color: successColor;
+  filter: brightness(2) drop-shadow(0 0 4px successColor);
+}
+
+.puzzleCard.failure .logo {
+  color: failureColor;
+  filter: drop-shadow(0 0 2px failureColor);
+}

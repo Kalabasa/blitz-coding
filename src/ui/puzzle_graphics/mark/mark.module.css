@@ -1,0 +1,32 @@
+@value successFilter from "~ui/styles/colors.module.css";
+@value failureFilter from "~ui/styles/colors.module.css";
+
+.check {
+  filter: successFilter;
+  animation: checkMarkEntrance 0.2s ease backwards;
+}
+
+.cross {
+  filter: failureFilter;
+  animation: crossMarkEntrance 0.2s ease backwards;
+}
+
+@keyframes checkMarkEntrance {
+  from {
+    transform: scale(3);
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+}
+
+@keyframes crossMarkEntrance {
+  from {
+    transform: scale(3);
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,18 @@
+@value backgroundColor: rgb(11, 11, 13);
+@value textColor: rgb(234, 233, 239);
+@value accentColor: rgb(255, 232, 81);
+@value successColor: rgb(34, 160, 61);
+@value failureColor: rgb(230, 40, 58);
+@value expectedColor: rgb(97, 115, 11);
+
+@value codeEditorColor: rgb(31, 31, 35);
+@value puzzleGraphicsColor: rgb(236, 236, 242);
+@value puzzleGraphicsPrimaryColor: rgb(17, 17, 18);
+@value puzzleGraphicsSecondaryColor: rgba(17, 17, 18, 0.6);
+@value puzzleGraphicsTertiaryColor: rgba(17, 17, 18, 0.06);
+@value cardBackColor: rgb(33, 34, 38);
+@value cardBackMarkColor: rgb(41, 44, 48);
+
+@value textFilter: invert(99%) sepia(15%) saturate(747%) hue-rotate(181deg) brightness(95%) contrast(97%);
+@value successFilter: invert(64%) sepia(50%) saturate(553%) hue-rotate(81deg) brightness(93%) contrast(90%);
+@value failureFilter: invert(15%) sepia(88%) saturate(3188%) hue-rotate(342deg) brightness(117%) contrast(89%);
