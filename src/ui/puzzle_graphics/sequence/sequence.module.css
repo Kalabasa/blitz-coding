@@ -10,6 +10,7 @@
 @value value from "~ui/puzzle_graphics/graphics.module.css";
 
 .container {
+  position: relative;
   display: flex;
   max-width: 80%;
 }

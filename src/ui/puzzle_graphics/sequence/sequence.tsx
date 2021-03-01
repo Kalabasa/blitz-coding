@@ -2,7 +2,8 @@ import classNames from "classnames";
 import { Run, Suite } from "code/run";
 import React, { CSSProperties, useLayoutEffect, useRef } from "react";
 import { runOutcome } from "round_types/utils";
-import { BlinkOnChange } from "ui/puzzle_graphics/graphics";
+import { BlinkOnChange } from "ui/blink_on_change/blink_on_change";
+import { formatValue } from "ui/puzzle_graphics/graphics";
 import { Mark } from "ui/puzzle_graphics/mark/mark";
 import styles from "./sequence.module.css";
 
@@ -93,17 +94,18 @@ const Item = ({ index, n, expected, result, outcome }: ItemProps) => (
     className={styles.item}
     style={
       {
+        // eslint-disable-next-line no-useless-computed-key
         ["--caseIndex"]: `${index}`,
       } as CSSProperties
     }
   >
-    <div className={styles.itemNumber}>{JSON.stringify(n)}</div>
-    <div className={styles.expected}>{JSON.stringify(expected)}</div>
+    <div className={styles.itemNumber}>{formatValue(n)}</div>
+    <div className={styles.expected}>{formatValue(expected)}</div>
     <BlinkOnChange value={result}>
       <div
         className={classNames(styles.result, !outcome && styles.emptyResult)}
       >
-        {outcome ? JSON.stringify(result) : "?"}
+        {outcome ? formatValue(result) : "?"}
       </div>
       {outcome && (
         <Mark

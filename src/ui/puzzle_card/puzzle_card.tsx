@@ -5,7 +5,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useRef
+  useRef,
 } from "react";
 import { Icon } from "ui/icon/icon";
 import { ReactComponent as PlaySVG } from "ui/icon/svg/play.svg";
@@ -16,6 +16,7 @@ import styles from "./puzzle_card.module.css";
 export type PuzzleCardProps = {
   graphics: ReactNode;
   editor: ReactNode;
+  modCode?: string;
   codePrefix: string;
   codeSuffix: string;
   outcome?: "success" | "failure";
@@ -28,6 +29,7 @@ export type PuzzleCardProps = {
 export const PuzzleCard = ({
   graphics,
   editor,
+  modCode,
   codePrefix,
   codeSuffix,
   outcome,
@@ -49,9 +51,13 @@ export const PuzzleCard = ({
     }
   }, [focus]);
 
-  const onKeyPress = useCallback(
+  const onKey = useCallback(
     (event: KeyboardEvent) => {
       if (!event.ctrlKey || event.key !== "Enter") return;
+
+      event.stopPropagation();
+      event.preventDefault();
+
       onSubmit();
     },
     [onSubmit]
@@ -72,12 +78,18 @@ export const PuzzleCard = ({
         outcome && styles[outcome],
         darkened && styles.darken
       )}
-      onKeyPress={onKeyPress}
+      onKeyPressCapture={onKey}
+      onKeyDownCapture={onKey}
     >
       <div className={styles.frontface}>
-        <div className={styles.graphicsContainer}>
-          {graphics}
-        </div>
+        <div className={styles.graphicsContainer}>{graphics}</div>
+        {modCode && (
+          <div className={styles.modCodeContainer}>
+            {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+            <div className={styles.modHeader}>// Modifiers:</div>
+            <pre className={classNames("code", styles.modCode)}>{modCode}</pre>
+          </div>
+        )}
         <div
           className={classNames("code", styles.codeContainer)}
           onMouseDown={(event) => focusChildTextArea(editorRef.current, event)}

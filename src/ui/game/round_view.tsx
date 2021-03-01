@@ -1,8 +1,9 @@
 import classNames from "classnames";
 import { debounce } from "debounce";
 import { Game, RoundResult } from "game/game";
+import { Mod } from "game/mod";
 import { Round } from "game/types";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Editor } from "ui/editor/editor";
 import { ErrorMessage } from "ui/error_message/error_message";
 import { PuzzleCard } from "ui/puzzle_card/puzzle_card";
@@ -38,7 +39,7 @@ export const RoundView = ({
       setWaiting(true);
 
       setResult(res);
-      console.log(res);
+      console.debug(res);
       if (res.success) {
         onRoundComplete(roundIndex);
       }
@@ -61,6 +62,13 @@ export const RoundView = ({
     [round, onRunResult]
   );
 
+  const graphics = useMemo(
+    () => <Graphics suite={round.suite} runs={result?.runs} />,
+    [Graphics, round, result]
+  );
+
+  const modCode = formatMods(round.mods);
+
   return (
     <div
       className={classNames({
@@ -77,7 +85,7 @@ export const RoundView = ({
       <PuzzleCard
         graphics={
           <>
-            <Graphics suite={round.suite} runs={result?.runs} />
+            {graphics}
             {result?.error && <ErrorMessage error={result.error} />}
           </>
         }
@@ -88,6 +96,7 @@ export const RoundView = ({
             setCode={setAndRunCode}
           />
         }
+        modCode={modCode}
         codePrefix={`function ${funcName}( ${inputNames.join(", ")} ) {`}
         codeSuffix="}"
         outcome={outcome}
@@ -109,4 +118,16 @@ function runCode(
 ) {
   const result = Game.runRound(cd, round);
   onResult(result);
+}
+
+function formatMods(mods?: Mod[]) {
+  if (!mods || !mods.length) return "";
+
+  return [...mods.map((mod) => mod.code).map(applyModCodeEmoji), ""].join(
+    ";\n"
+  );
+}
+
+function applyModCodeEmoji(modCode: string) {
+  return modCode.replaceAll("$BAN$", "🚫 ");
 }

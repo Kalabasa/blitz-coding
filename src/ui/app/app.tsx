@@ -8,20 +8,17 @@ import { Logo } from "ui/logo/logo";
 
 export const App = memo(() => {
   const game = Game.create({
-    difficulty: Difficulty.Easy,
-    numberOfRounds: 10,
+    difficulty: Difficulty.Hard,
+    numberOfRounds: 6,
   });
 
   return (
     <div className={styles.app}>
       <div className={styles.header}>
         <span className={styles.logoBar}>
-          <span className={styles.logo}>
-            &#123;
-            <Logo variant="emoji" />
-            &#125;
-          </span>
-          Zy
+          &#123;
+          <Logo className={styles.logo} variant="emoji" />
+          <span className={styles.appName}>blitz-coding</span>&#125;
         </span>
       </div>
       <div className={styles.game}>

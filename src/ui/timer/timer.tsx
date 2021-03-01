@@ -13,16 +13,6 @@ export const Timer = ({ startTime, endTime }: TimerProps) => {
 
   const left = Math.floor(Math.max(0, endTime - now));
 
-  useEffect(() => {
-    function loop() {
-      setNow(Date.now());
-      updateBar();
-      handle = requestAnimationFrame(loop);
-    }
-    let handle = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(handle);
-  }, []);
-
   const updateBar = useCallback(() => {
     let bar = barRef.current;
     if (!bar) return;
@@ -42,7 +32,20 @@ export const Timer = ({ startTime, endTime }: TimerProps) => {
       Math.min(1, Math.max(0, (t - 0.25) * 6 + 0.25))
     );
     bar.style.background = `rgb(${color.r},${color.g},${color.b})`;
-  }, []);
+  }, [startTime, endTime]);
+
+  useEffect(() => {
+    function loop() {
+      setNow(Date.now());
+      updateBar();
+      if (looping) requestAnimationFrame(loop);
+    }
+    let looping = true;
+    loop();
+    return () => {
+      looping = false;
+    };
+  }, [updateBar]);
 
   return (
     <div className={styles.container}>

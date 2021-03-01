@@ -1,11 +1,13 @@
 @value backgroundColor: rgb(11, 11, 13);
 @value textColor: rgb(234, 233, 239);
+@value secondaryTextColor: rgb(134, 136, 150);
 @value accentColor: rgb(255, 232, 81);
 @value successColor: rgb(34, 160, 61);
 @value failureColor: rgb(230, 40, 58);
 @value expectedColor: rgb(97, 115, 11);
 
 @value codeEditorColor: rgb(31, 31, 35);
+@value codeEditorSecondaryColor: rgb(52, 52, 60);
 @value puzzleGraphicsColor: rgb(236, 236, 242);
 @value puzzleGraphicsPrimaryColor: rgb(17, 17, 18);
 @value puzzleGraphicsSecondaryColor: rgba(17, 17, 18, 0.6);

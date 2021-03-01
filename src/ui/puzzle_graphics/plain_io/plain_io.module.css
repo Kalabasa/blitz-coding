@@ -9,7 +9,7 @@
 
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: auto auto;
   grid-template-areas:
     "input expectation"
@@ -29,12 +29,12 @@
 
 .inputSection {
   grid-area: input;
-  padding: 12px;
+  padding: 12px 6px 12px 12px;
 }
 
 .expectationSection {
   grid-area: expectation;
-  padding: 12px;
+  padding: 12px 12px 12px 6px;
 }
 
 .resultSection {
@@ -53,11 +53,12 @@
 
 .inputLine {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .inputName {
   composes: key;
-  flex: 1 0 25%;
+  flex: 1 1 25%;
 }
 
 .inputValue {

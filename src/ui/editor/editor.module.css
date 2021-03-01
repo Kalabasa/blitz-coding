@@ -1,3 +1,9 @@
+@value codeEditorSecondaryColor from "~ui/styles/colors.module.css";
+
 .textarea {
   outline: transparent;
+}
+
+.textarea::selection {
+  background: codeEditorSecondaryColor;
 }

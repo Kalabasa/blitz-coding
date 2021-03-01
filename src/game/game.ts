@@ -1,5 +1,7 @@
 import { Run } from "code/run";
 import { Generate } from "game/generate";
+import { Mod } from "game/mod";
+import { Bootstrap } from "game/bootstrap";
 import { Difficulty, Round } from "game/types";
 
 export type Game = {
@@ -27,17 +29,30 @@ export type RoundResult = {
 };
 
 function runRound(code: string, round: Round): RoundResult {
-  const result = Run.code(code, round.suite);
-  if (result instanceof Error) {
-    return { success: false, error: result };
-  }
+  try {
+    for (let mod of round.mods ?? []) {
+      mod.preCheck?.(code);
+    }
 
-  return {
-    success: result.every((run) => run.match),
-    runs: result,
-  };
+    const fn = Bootstrap.createFunction(
+      round.suite,
+      code,
+      round.mods ? Mod.generateSetupCode(round.mods) : "",
+      Bootstrap.generateSetupCode(round.suite)
+    );
+
+    const result = Run.cases(fn, round.suite.cases);
+
+    return {
+      success: result.every((run) => run.match),
+      runs: result,
+    };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Game = Object.freeze({
   create: createGame,
   runRound,

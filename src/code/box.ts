@@ -6,7 +6,14 @@ export type Box = {
 
 function boxValue<T>(value: T, id?: string): Box & T {
   if (value === null || value === undefined) return value;
-  let obj = new (Object.getPrototypeOf(value).constructor)(value);
+
+  if (Array.isArray(value)) {
+    const arr = [...value] as any;
+    arr[idk] = id;
+    return arr;
+  }
+
+  const obj = new (Object.getPrototypeOf(value).constructor)(value);
   obj[idk] = id;
   return obj;
 }
@@ -23,6 +30,7 @@ function unbox(box: Box) {
   return box.valueOf();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Box = Object.freeze({
   value: boxValue,
   arrayValues: boxArrayValues,

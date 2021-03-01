@@ -1,6 +1,7 @@
 import classNames from "classnames";
-import React, { useLayoutEffect, useState } from "react";
-import { BlinkOnChange } from "ui/puzzle_graphics/graphics";
+import React, { Fragment } from "react";
+import { BlinkOnChange } from "ui/blink_on_change/blink_on_change";
+import { formatValue } from "ui/puzzle_graphics/graphics";
 import { Mark } from "ui/puzzle_graphics/mark/mark";
 import styles from "./plain_io.module.css";
 
@@ -24,13 +25,13 @@ export const PlainIO = ({
       {inputs.map(([name, value]) => (
         <div key={name} className={styles.inputLine}>
           <span className={styles.inputName}>{name}:</span>
-          <span className={styles.inputValue}>{JSON.stringify(value)}</span>
+          <span className={styles.inputValue}>{formatValue(value)}</span>
         </div>
       ))}
     </div>
     <div className={styles.expectationSection}>
       <span className={styles.funcName}>{funcName}:</span>{" "}
-      <span className={styles.expected}>{JSON.stringify(expected)}</span>
+      <span className={styles.expected}>{formatValue(expected)}</span>
     </div>
     <BlinkOnChange value={result}>
       <div
@@ -40,13 +41,18 @@ export const PlainIO = ({
       >
         <span className={styles.resultPrefix}>
           {funcName}(
-          {inputs.map(([, value]) => JSON.stringify(value)).join(", ")}
+          {inputs.map(([, value], i) => (
+            <Fragment key={i}>
+              {i > 0 && <>,</>}
+              {formatValue(value)}
+            </Fragment>
+          ))}
           )&nbsp;=&nbsp;
         </span>
         <span
           className={classNames(styles.result, !outcome && styles.emptyResult)}
         >
-          {outcome ? JSON.stringify(result) : "?"}
+          {outcome ? formatValue(result) : "?"}
         </span>
         {outcome && (
           <Mark

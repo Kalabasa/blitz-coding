@@ -1,13 +1,14 @@
-import classNames from "classnames";
+import { Case } from "code/case";
 import { Run, Suite } from "code/run";
 import React, {
   CSSProperties,
+  Fragment,
+  PropsWithChildren,
   ReactNode,
-  useLayoutEffect,
-  useState,
 } from "react";
-import { getVisibleRuns, runOutcome } from "round_types/utils";
+import { runOutcome } from "round_types/utils";
 import { CaseGrid } from "ui/puzzle_graphics/case_grid/case_grid";
+import { GraphicsBorder } from "ui/puzzle_graphics/graphics_border/graphics_border";
 import { PlainIO } from "ui/puzzle_graphics/plain_io/plain_io";
 import styles from "./graphics.module.css";
 
@@ -16,46 +17,81 @@ export type GraphicsProps = {
   runs?: Run[];
 };
 
-export type GraphicsBorderProps = {
-  disableBottomRight?: boolean;
-  disableTopLeft?: boolean;
-  children?: ReactNode;
-  style?: CSSProperties;
-};
+export function formatValue(value: unknown): ReactNode {
+  if (value === undefined) return "undefined";
+  if (value === null) return "null";
+  value = (value as any).valueOf();
 
-export const GraphicsBorder = ({
-  disableBottomRight,
-  disableTopLeft,
-  children,
-  style,
-}: GraphicsBorderProps) => (
-  <div
-    className={classNames({
-      [styles.border]: true,
-      [styles.disableBottomRight]: disableBottomRight,
-      [styles.disableTopLeft]: disableTopLeft,
-    })}
-    style={style}
-  >
-    {children}
-  </div>
+  if (value instanceof Array || Array.isArray(value)) {
+    return (
+      <>
+        <Sym>[</Sym>
+        {value.map((v, i) => (
+          <Fragment key={i}>
+            {i > 0 && <Sym>,&#8203;</Sym>}
+            {formatValue(v)}
+          </Fragment>
+        ))}
+        <Sym>]</Sym>
+      </>
+    );
+  }
+
+  switch (typeof value) {
+    case "string":
+      return (
+        <>
+          <Sym>‘</Sym>
+          {value.replace(/\\/g, "\\\\").replace("'", "\\'")}
+          <Sym>’</Sym>
+        </>
+      );
+    case "number":
+    case "boolean":
+      return "" + value;
+    case "function":
+      const funcStr = value.toString();
+      return funcStr.length <= "()=>12345678".length ? funcStr : "Function";
+    case "object":
+      if (value === null) return "null";
+      if (value instanceof Date) return value.toISOString();
+      return (
+        <>
+          <Sym>{"{"}</Sym>
+          {Object.keys(value).map((k, i) => {
+            const key = formatKey(k);
+            return (
+              <Fragment key={i}>
+                {i > 0 && <Sym>,&#8203;</Sym>}
+                {key}
+                <Sym>:</Sym>
+                {formatValue((value as any)[k])}
+              </Fragment>
+            );
+          })}
+          <Sym>{"}"}</Sym>
+        </>
+      );
+  }
+
+  throw new Error("Unsupported value: " + value);
+}
+
+function formatKey(k: string) {
+  return /^[a-z_$][a-z0-9_$]*$/i.test(k) ? (
+    k
+  ) : (
+    <>
+      <Sym>“</Sym>
+      {k}
+      <Sym>”</Sym>
+    </>
+  );
+}
+
+const Sym = ({ children }: PropsWithChildren<{}>) => (
+  <span className={styles.symbol}>{children}</span>
 );
-
-export type BlinkOnChangeProps = {
-  children?: ReactNode;
-  value: any;
-};
-
-export const BlinkOnChange = ({ children, value }: BlinkOnChangeProps) => {
-  const [show, setShow] = useState(false);
-
-  useLayoutEffect(() => {
-    setShow(false);
-    setTimeout(() => setShow(true));
-  }, [value]);
-
-  return show ? <>{children}</> : null;
-};
 
 export const createPlainCaseGridGraphics = (
   rows?: number,
@@ -68,6 +104,7 @@ export const createPlainCaseGridGraphics = (
           key={`${i}:${example.inputs.join(",")}`}
           style={
             {
+              // eslint-disable-next-line no-useless-computed-key
               ["--caseIndex"]: `${i}`,
             } as CSSProperties
           }
@@ -79,7 +116,7 @@ export const createPlainCaseGridGraphics = (
               example.inputs[j].valueOf(),
             ])}
             expected={example.output.valueOf()}
-            result={run?.output.valueOf()}
+            result={run?.output?.valueOf()}
             outcome={runOutcome(run)}
           />
         </GraphicsBorder>
@@ -95,6 +132,83 @@ function countStableItems(
   return Math.floor(((rows ?? 0) * (columns ?? 0)) / 2);
 }
 
+// returns: range[0, 1]
+// higher order shows up first
+function inputValueSortOrder(value: any): number {
+  if (value === undefined) return 0;
+  if (value === null) return 0;
+  const p = value.valueOf();
+
+  if (p instanceof Array || Array.isArray(p)) {
+    const itemSum: number = p.reduce(
+      (acc, v) => acc + inputValueSortOrder(v),
+      0
+    );
+    return p.length ? itemSum / p.length : 0;
+  }
+
+  switch (typeof p) {
+    case "boolean":
+      return p ? 1 : 0.5;
+    case "number":
+      return isFinite(p) ? (p > 0 ? 1 / p : 0.01 / (1 - p)) : 0;
+    case "string":
+      return p.length ? 0.5 / p.length : 0;
+    case "function":
+      return 0.5 * inputValueSortOrder(p.toString());
+    case "object":
+      if (p === null) return 0;
+      return 0.5 * inputValueSortOrder(Object.values(p));
+  }
+
+  return 0;
+}
+
+function caseSortOrder(example: Case, run?: Run) {
+  let order = 0;
+
+  if (!example.visibility || example.visibility === "visible") order += 10;
+
+  if (run?.match === false) order += 100;
+
+  order +=
+    example.inputs.reduce((acc, value) => acc + inputValueSortOrder(value), 0) /
+    example.inputs.length;
+
+  return order;
+}
+
+const orderKey = Symbol("order");
+
+export function getVisibleRuns(
+  stableCount: number,
+  suite: Suite,
+  runs?: Run[]
+): { example: Case; run?: Run }[] {
+  const items = [...suite.cases].map((c, i) => ({
+    example: c,
+    run: runs?.[i],
+  }));
+
+  const stableItems = items
+    .map((obj) => ({
+      ...obj,
+      [orderKey]: caseSortOrder(obj.example),
+    }))
+    .sort((a, b) => b[orderKey] - a[orderKey])
+    .slice(0, stableCount);
+
+  const dynamicItems = items
+    .filter((item) => !stableItems.some((si) => si.example === item.example))
+    .map((obj) => ({
+      ...obj,
+      [orderKey]: caseSortOrder(obj.example, obj.run),
+    }))
+    .sort((a, b) => b[orderKey] - a[orderKey]);
+
+  return stableItems.concat(dynamicItems);
+}
+
 /*
 Text description
 -----------------------------------------------
@@ -104,38 +218,6 @@ Text description
 |                                             |
 |                                             |
 -----------------------------------------------
-
-
-Isolated cases
--------------------------------
-|                             |
-| n: 10  isEven: true         |
-|                             |
--------------------------------
-| n: 10  isEven: true         |
-|                             |
-| isEven(10)   = ?            |
--------------------------------
-| n: 10  isEven: true         |
-|                             |
-| isEven(10)   = true     (✔) |
--------------------------------
-| n: 10  isEven: true         |
-|                             |
-| isEven(10)   = false    (⨯) |
--------------------------------
-
-Sequential cases
-| n           | 1 | 2 | 3 | 4 |
-| S_n         | 2 | 4 | 6 | 8 |
-
-| n           | 1 | 2 | 3 | 4 |
-| S_n         | 2 | 4 | 6 | 8 |
-| sequence(n) | ? | ? | ? | ? |
-
-| n           | 1 | 2 | 3 | 4 |
-| S_n         | 2 | 4 | 6 | 8 |
-| sequence(n) | 2✔| 3⨯| 4⨯| 5⨯|
 
 Array manipulation
 -------------------------------

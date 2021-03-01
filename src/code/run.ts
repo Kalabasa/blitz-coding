@@ -1,6 +1,5 @@
 import { Box } from "code/box";
 import { Case } from "code/case";
-import { memo } from "react";
 
 export type Run = {
   example: Case;
@@ -14,58 +13,11 @@ export type Suite = {
   cases: Case[];
 };
 
-function runCode(funcCode: string, suite: Suite): Run[] | Error {
-  try {
-    const fn = createFunction(suite, funcCode);
-    return runAll(fn, suite.cases);
-  } catch (error) {
-    return error;
-  }
+function runCases(fn: Function, cases: Case[]): Run[] {
+  return cases.map((ex) => runCase(fn, ex));
 }
 
-function createFunction(suite: Suite, funcCode: string) {
-  const { funcName, inputNames } = suite;
-
-  const prefix = "_" + Date.now();
-  const n = (name: string) => prefix + name;
-
-  const parameters = inputNames.map((name) => "_" + prefix + name);
-
-  const memoizeNm = n("memoize");
-  const fnNm = n("fn");
-  const code = `
-function ${memoizeNm}(${fnNm}) {
-  var cache = Object.create(null);
-  return function(){
-    var key = JSON.stringify(arguments);
-    if (!(key in cache)) {
-      cache[key] = ${fnNm}.apply(this, arguments);
-    }
-    return cache[key];
-  };
-}
-
-function ${funcName}(${inputNames.join(",")}){
-/* ------ PLAYER CODE START ------ */
-
-${funcCode}
-
-/* ------ PLAYER CODE END ------ */
-}
-
-${funcName} = ${memoizeNm}(${funcName});
-return ${funcName}(${parameters.join(",")});
-    `;
-  console.log(code);
-
-  return new Function(...parameters, code);
-}
-
-function runAll(fn: Function, cases: Case[]): Run[] {
-  return cases.map((ex) => run(fn, ex));
-}
-
-function run(fn: Function, example: Case): Run {
+function runCase(fn: Function, example: Case): Run {
   const output = fn(...example.inputs.map(Box.unbox));
 
   return {
@@ -75,6 +27,7 @@ function run(fn: Function, example: Case): Run {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Run = Object.freeze({
-  code: runCode,
+  cases: runCases,
 });

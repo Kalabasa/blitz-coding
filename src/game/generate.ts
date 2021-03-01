@@ -1,13 +1,15 @@
 import deepEqual from "deep-equal";
 import { Difficulty, Round } from "game/types";
+import { createArrayEquals } from "round_types/array_equals/array_equals";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
 import { createIsEven } from "round_types/is_even/is_even";
 import { createQuadSequence } from "round_types/quad_sequence/quad_sequence";
 
 const allRoundGens: RoundGenerator[] = [
-  createIsEven, //
-  createQuadSequence, //
-  createFibonacciSequence, //
+  createIsEven,
+  createQuadSequence,
+  createFibonacciSequence,
+  createArrayEquals,
 ];
 
 export type RoundType<P extends unknown[] = any[]> = {
@@ -53,6 +55,8 @@ function generateRandomRounds(difficulty: Difficulty, count: number): Round[] {
       }
     }
   }
+
+  console.log(types);
 
   return types.map((type) => type.fn(...type.params));
 }

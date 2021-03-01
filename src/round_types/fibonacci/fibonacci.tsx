@@ -1,12 +1,13 @@
 import memoize from "fast-memoize";
 import { RoundGenerator } from "game/generate";
-import { Difficulty } from "game/types";
+import { Difficulty, Round } from "game/types";
+import { modBanRecursion } from "mod_types/ban_recursion/ban_recursion";
 import { rangeCases } from "round_types/utils";
 import seedrandom from "seedrandom";
 import { GraphicsProps } from "ui/puzzle_graphics/graphics";
 import { Sequence } from "ui/puzzle_graphics/sequence/sequence";
 
-const fibonacciSequence = () => ({
+const fibonacciSequence = (noRecursion: boolean): Round => ({
   points: 3,
   time: 60,
   suite: {
@@ -17,6 +18,7 @@ const fibonacciSequence = () => ({
       output: fib(i),
     })),
   },
+  mods: noRecursion ? [modBanRecursion("fib")] : [],
   Graphics,
 });
 
@@ -32,7 +34,7 @@ export const createFibonacciSequence: RoundGenerator = {
     const random = seedrandom(seed);
     return {
       fn: fibonacciSequence,
-      params: [],
+      params: [difficulty > Difficulty.Easy && random() < 0.5],
     };
   },
 };

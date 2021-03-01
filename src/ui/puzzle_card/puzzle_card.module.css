@@ -1,7 +1,9 @@
 @value ease from "~ui/styles/animation.module.css";
+@value accentColor from "~ui/styles/colors.module.css";
 @value successColor from "~ui/styles/colors.module.css";
 @value failureColor from "~ui/styles/colors.module.css";
 @value codeEditorColor from "~ui/styles/colors.module.css";
+@value codeEditorSecondaryColor from "~ui/styles/colors.module.css";
 @value puzzleGraphicsColor from "~ui/styles/colors.module.css";
 @value puzzleGraphicsPrimaryColor from "~ui/styles/colors.module.css";
 @value cardBackColor from "~ui/styles/colors.module.css";
@@ -47,23 +49,51 @@
   background: puzzleGraphicsColor;
   color: puzzleGraphicsPrimaryColor;
   box-shadow: cardTopBoxShadow, cardLeftBoxShadow, cardRightBoxShadow;
+  z-index: 1;
+}
+
+.modCodeContainer {
+  position: relative;
+  padding: 24px 24px 12px;
+  border-bottom: solid 1px codeEditorSecondaryColor;
+  background: codeEditorColor;
+  box-shadow: cardLeftBoxShadow, cardRightBoxShadow;
+  user-select: none;
+  z-index: 2;
 }
 
 .codeContainer {
   position: relative;
   padding: 24px;
-  min-height: 240px;
+  min-height: 192px;
   font-size: 12pt;
   background: codeEditorColor;
   box-shadow: cardBottomBoxShadow, cardLeftBoxShadow, cardRightBoxShadow;
   cursor: text;
+  z-index: 3;
+}
+.modCodeContainer + .codeContainer {
+  padding: 12px 24px 24px;
+}
+
+.modHeader {
+  color: accentColor;
+  opacity: 0.4;
+  font-weight: lighter;
+}
+
+.modCode:global(.code) {
+  margin: 0;
+  color: transparent;
+  text-shadow: 0 0 accentColor;
+  font-weight: lighter;
 }
 
 .extraCode {
   margin: 0;
+  font-weight: lighter;
   opacity: 0.4;
   user-select: none;
-  font-weight: lighter;
 }
 
 .editor {

@@ -40,6 +40,7 @@ function unsupported(string?: string): never {
   throw new Error(`Unsupported format: '${string}'`);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Color = Object.fromEntries(colors);
 
 export const interpolateColor = (a: Color, b: Color, t: number): Color => ({

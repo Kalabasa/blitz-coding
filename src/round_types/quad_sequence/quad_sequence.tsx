@@ -2,14 +2,12 @@ import { RoundGenerator } from "game/generate";
 import { Difficulty } from "game/types";
 import { rangeCases } from "round_types/utils";
 import seedrandom from "seedrandom";
-import {
-  GraphicsProps
-} from "ui/puzzle_graphics/graphics";
+import { GraphicsProps } from "ui/puzzle_graphics/graphics";
 import { Sequence } from "ui/puzzle_graphics/sequence/sequence";
 
 const quadSequence = (a: number, b: number, c: number) => ({
   points: 2,
-  time: 60,
+  time: 30,
   suite: {
     funcName: "seq",
     inputNames: ["n"],
@@ -34,13 +32,11 @@ export const createQuadSequence: RoundGenerator = {
     return {
       fn: quadSequence,
       params: [
-        difficulty > Difficulty.Easy
-          ? Math.floor(random() * (difficulty > Difficulty.Medium ? 4 : 3))
-          : 0,
+        difficulty >= Difficulty.Hard ? Math.floor(random() * 2) : 0,
         (1 + Math.floor(random() * 20)) *
-          (difficulty <= Difficulty.Easy ? 1 : random() < 0.5 ? -1 : 1),
-        difficulty > Difficulty.Easy
-          ? Math.floor(random() * 200) - 100
+          (difficulty <= Difficulty.Easy ? 1 : random() < 0.7 ? -1 : 1),
+        difficulty >= Difficulty.Medium
+          ? (50 + Math.floor(random() * 100)) * (random() < 0.5 ? -1 : 1)
           : Math.floor(Math.pow(random(), 3) * 10),
       ],
     };

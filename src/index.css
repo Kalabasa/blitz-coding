@@ -18,3 +18,7 @@ body {
 pre {
   font-family: inherit;
 }
+
+::selection {
+  background: accentColor;
+}
