@@ -1,37 +1,113 @@
+@value ease from '~ui/styles/animation.module.css';
+@value textColor from '~ui/styles/colors.module.css';
+@value failureColor from '~ui/styles/colors.module.css';
+@value backgroundRGB from '~ui/styles/colors.module.css';
+@value backgroundColor from '~ui/styles/colors.module.css';
+
+@value shadowColor: rgba(backgroundRGB, 0.8);
+@value lighterShadowColor: rgba(backgroundRGB, 0.25);
+
 .container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 24px;
-  animation: entrance 0.1s 1s linear backwards;
+  opacity: 0;
+  transform: translateY(6px);;
+  transition: opacity 0.1s linear, transform 0.1s ease;
 }
 
-@keyframes entrance {
-  from {
-    opacity: 0;
-  }
+.active {
+  opacity: 1;
+  transform: none;
+}
+
+.warnNone {
+  color: textColor;
+}
+.warnHigh,
+.warnVeryHigh {
+  color: failureColor;
 }
 
 .timeDisplay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  text-shadow: 0 0 30px rgba(0, 0, 0, 1);
-  transform: translate(-50%, -50%);
+  display: inline-block;
+  font-size: 72px;
+  font-weight: lighter;
+  white-space: pre;
+  transform: scale(0.5);
+  transform-origin: bottom center;
+}
+.warnLow .timeDisplay {
+  transform: scale(0.7);
+}
+.warnHigh .timeDisplay {
+  transform: scale(0.8);
+  animation: shakeTimeDisplay 25ms linear infinite alternate-reverse;
+}
+.warnVeryHigh .timeDisplay {
+  transform: scale(1);
+  animation: shakeTimeDisplayVeryHigh 25ms linear infinite alternate-reverse;
 }
 
-.barContainer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  transform: translate(-50%, -50%);
+@keyframes shakeTimeDisplay {
+  from {
+    transform: scale(0.75) translateX(-2px);
+  }
+  to {
+    transform: scale(0.75) translateX(2px);
+  }
+}
+
+@keyframes shakeTimeDisplayVeryHigh {
+  from {
+    transform: scale(1) translateX(-3px);
+  }
+  to {
+    transform: scale(1) translateX(3px);
+  }
 }
 
 .bar {
+  position: relative;
   width: 100%;
-  height: 100%;
-  border-radius: 100vh;
-  background: green;
+  height: 6px;
+  border: solid 1px backgroundColor;
+  border-radius: 99999px;
+  background: var(--barColor, white);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.bar::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  width: 60px;
+}
+
+.warnHigh .bar {
+  animation: shakeBar 25ms linear infinite alternate-reverse;
+}
+.warnVeryHigh .bar {
+  animation: shakeBarVeryHigh 25ms linear infinite alternate-reverse;
+}
+
+@keyframes shakeBar {
+  from {
+    top: -2px;
+  }
+  to {
+    top: 2px;
+  }
+}
+
+@keyframes shakeBarVeryHigh {
+  from {
+    top: -2px;
+  }
+  to {
+    top: 2px;
+  }
 }

@@ -5,12 +5,3 @@
   overflow: hidden;
   perspective: 4000px;
 }
-
-.timerContainer {
-  position: absolute;
-  left: 50%;
-  bottom: max(calc(50% - 360px), 12px);
-  width: 600px;
-  transform: translateX(-50%);
-  pointer-events: none;
-}

@@ -1,7 +1,7 @@
 import { Case } from "code/case";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { range, rangeCases } from "round_types/utils";
+import { pick, range, rangeCases, sample, shuffle } from "round_types/utils";
 import seedrandom from "seedrandom";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
@@ -24,8 +24,6 @@ const arrayEquals = ({
     funcName: ignoreOrder ? "setEq" : "arrEq",
     inputNames: ["a", "b"],
     cases: rangeCases(0, 40, (i) => {
-      const random = seedrandom(Date.now().toString() + i.toString());
-
       const mixedTypesNow = mixedTypes === "regular" && i < 35;
       const specialTypesNow = mixedTypes === "special" && i < 35;
       const varyLengthNow = varyLength && i < 5;
@@ -34,19 +32,18 @@ const arrayEquals = ({
         ? specialPool()
         : mixedTypesNow
         ? mixedPool()
-        : pick([numberPool, letterPool], random)();
+        : pick([numberPool, letterPool])();
 
       const caseTypes = [caseForEqual, caseForUnequal];
       if (mixedTypesNow || specialTypesNow) {
         caseTypes.push(caseForLooselyUnequal);
       }
-      const caseFunc = varyLengthNow ? caseForEqual : pick(caseTypes, random);
+      const caseFunc = varyLengthNow ? caseForEqual : pick(caseTypes);
 
       const example: any = caseFunc({
         pool,
         unique,
         ignoreOrder,
-        random,
       });
 
       if (varyLengthNow) {
@@ -66,19 +63,18 @@ const arrayEquals = ({
 
 export const createArrayEquals: RoundGenerator = {
   minDifficulty: Difficulty.Easy,
-  maxDifficulty: Difficulty.Hard,
   weight: 1,
   create: (difficulty: Difficulty, seed: string) => {
     const random = seedrandom(seed);
 
     const params: RoundTypeParameters = {
-      unique: difficulty <= Difficulty.Easy,
+      unique: difficulty <= Difficulty.Medium,
       varyLength: difficulty >= Difficulty.Medium,
       ignoreOrder: difficulty >= Difficulty.Medium && random() < 0.5,
       mixedTypes:
-        difficulty <= Difficulty.Easy
+        difficulty <= Difficulty.Medium
           ? "none"
-          : difficulty <= Difficulty.Medium
+          : difficulty <= Difficulty.Hard
           ? "regular"
           : "special",
     };
@@ -94,7 +90,6 @@ export const createArrayEquals: RoundGenerator = {
  *  Helpers
  */
 
-type Random = () => number;
 const exampleArrayLength = 3;
 
 // pools of values
@@ -104,12 +99,7 @@ const letterPool = () =>
 const mixedPool = () => [
   ...numberPool(),
   ...numberPool().map(String),
-  ...array({
-    length: 1,
-    pool: letterPool(),
-    unique: true,
-    random: Math.random,
-  }),
+  ...sample(1, letterPool()),
 ];
 const specialPool = () => [
   0,
@@ -130,18 +120,16 @@ function caseForEqual({
   pool,
   unique,
   ignoreOrder,
-  random,
 }: {
   pool: any[];
   unique: boolean;
   ignoreOrder: boolean;
-  random: Random;
 }) {
-  const a = array({ length: exampleArrayLength, pool, unique, random });
+  const a = sample(exampleArrayLength, pool, unique);
   const b = [...a];
 
   if (ignoreOrder) {
-    shuffle(b, random);
+    shuffle(b);
 
     for (let i = 0; i < a.length; i++) {
       if (a[0] !== b[i]) {
@@ -160,21 +148,19 @@ function caseForEqual({
 function caseForUnequal({
   pool,
   ignoreOrder,
-  random,
 }: {
   pool: any[];
   ignoreOrder: boolean;
-  random: Random;
 }) {
   let a, b;
 
-  if (ignoreOrder || random() < 0.75) {
-    a = array({ length: exampleArrayLength, pool, unique: true, random });
-    b = array({ length: exampleArrayLength, pool, unique: false, random });
+  if (ignoreOrder || Math.random() < 0.75) {
+    a = sample(exampleArrayLength, pool, true);
+    b = sample(exampleArrayLength, pool, false);
   } else {
-    a = array({ length: exampleArrayLength, pool, unique: true, random });
+    a = sample(exampleArrayLength, pool, true);
     b = [...a];
-    shuffle(b, random);
+    shuffle(b);
 
     for (let i = 0; i < a.length; i++) {
       if (a[0] !== b[i]) {
@@ -194,61 +180,24 @@ function caseForLooselyUnequal(options: {
   pool: any[];
   unique: boolean;
   ignoreOrder: boolean;
-  random: Random;
 }) {
   const example = caseForEqual(options);
 
-  example.inputs[1] = mixupTypes(example.inputs[1], options.random);
+  example.inputs[1] = mixupTypes(example.inputs[1]);
   example.output = false;
 
   return example;
 }
 
-function array({
-  length,
-  pool,
-  unique,
-  random,
-}: {
-  length: number;
-  pool: any[];
-  unique: boolean;
-  random: Random;
-}) {
-  length = Math.min(length, pool.length);
-  const a = [];
-  while (a.length < length) {
-    a.push((unique || a.length === 0 ? pluck : pick)(pool, random));
-  }
-  return a;
-}
-
-function pick<T>(array: T[], random: Random): T {
-  const i = Math.floor(random() * array.length);
-  return array[i];
-}
-
-function pluck<T>(array: T[], random: Random): T {
-  const i = Math.floor(random() * array.length);
-  return array.splice(i, 1)[0];
-}
-
-function shuffle(array: any[], random: Random) {
-  for (let i = 0; i < array.length; i++) {
-    const j = Math.floor(random() * i);
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
 // Generates a new array whose elements are loosely equal
 // or equal after serialization to corresponding original elements
-function mixupTypes(array: any[], random: Random): any[] {
-  const target = Math.floor(random() * array.length);
+function mixupTypes(array: any[]): any[] {
+  const target = Math.floor(Math.random() * array.length);
   return array.map((value: any, i) => {
     if (i !== target) return value;
 
-    if (value === null) return random() < 0.5 ? undefined : Infinity;
-    if (value === undefined) return random() < 0.5 ? null : Infinity;
+    if (value === null) return Math.random() < 0.5 ? undefined : Infinity;
+    if (value === undefined) return Math.random() < 0.5 ? null : Infinity;
 
     switch (typeof value) {
       case "number":

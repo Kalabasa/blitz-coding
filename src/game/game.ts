@@ -1,6 +1,6 @@
 import { Run } from "code/run";
 import { Generate } from "game/generate";
-import { Mod } from "game/mod";
+import { Mod } from "mods/mod";
 import { Bootstrap } from "game/bootstrap";
 import { Difficulty, Round } from "game/types";
 
@@ -28,7 +28,11 @@ export type RoundResult = {
   error?: Error;
 };
 
-function runRound(code: string, round: Round): RoundResult {
+function runRound(
+  code: string,
+  round: Round,
+  logger?: (...data: any[]) => void
+): RoundResult {
   try {
     for (let mod of round.mods ?? []) {
       mod.preCheck?.(code);
@@ -38,7 +42,9 @@ function runRound(code: string, round: Round): RoundResult {
       round.suite,
       code,
       round.mods ? Mod.generateSetupCode(round.mods) : "",
-      Bootstrap.generateSetupCode(round.suite)
+      round.mods ? Mod.generateCleanupCode(round.mods) : "",
+      Bootstrap.generateSetupCode(round.suite),
+      logger
     );
 
     const result = Run.cases(fn, round.suite.cases);

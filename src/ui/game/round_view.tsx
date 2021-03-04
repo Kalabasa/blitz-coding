@@ -1,30 +1,52 @@
 import classNames from "classnames";
 import { debounce } from "debounce";
 import { Game, RoundResult } from "game/game";
-import { Mod } from "game/mod";
 import { Round } from "game/types";
-import { useCallback, useMemo, useState } from "react";
+import { Mod } from "mods/mod";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import seedrandom from "seedrandom";
+import {
+  AlertMessage,
+  AlertMessageProps,
+} from "ui/alert_message/alert_message";
+import { Light } from "ui/light/light";
 import { Editor } from "ui/editor/editor";
-import { ErrorMessage } from "ui/error_message/error_message";
 import { PuzzleCard } from "ui/puzzle_card/puzzle_card";
+import { Color } from "ui/styles/colors";
+import { Timer } from "ui/timer/timer";
 import styles from "./round_view.module.css";
+
+enum RoundStep {
+  Play,
+  Flip,
+  Outcome,
+}
 
 export const RoundView = ({
   game,
   round: roundIndex,
   currentRound,
-  active,
-  onRoundComplete,
+  nextRound,
 }: {
   game: Game;
   round: number;
   currentRound: number;
-  active: boolean;
-  onRoundComplete: (round: number) => void;
+  nextRound: () => void;
 }): JSX.Element => {
   const [result, setResult] = useState(undefined as RoundResult | undefined);
   const [code, setCode] = useState("return ");
-  const [waiting, setWaiting] = useState(false);
+  const [executing, setExecuting] = useState(false);
+  const [timerStart, setTimerStart] = useState<number>();
+  const [timerEnd, setTimerEnd] = useState<number>();
+  const [roundStep, setRoundStep] = useState<RoundStep>(RoundStep.Play);
+  const timeoutHandle = useRef<any>();
+  const logsRef = useRef<string[]>([]);
 
   const round = game.rounds[roundIndex];
   const { Graphics, suite } = round;
@@ -34,90 +56,163 @@ export const RoundView = ({
   const outcome =
     success === undefined ? undefined : success ? "success" : "failure";
 
-  const onRunResult = useCallback(
-    (res) => {
-      setWaiting(true);
+  const active = roundIndex === currentRound;
 
+  const onResult = useCallback(
+    (res: RoundResult, end: boolean) => {
       setResult(res);
       console.debug(res);
-      if (res.success) {
-        onRoundComplete(roundIndex);
+      if (end) {
+        setRoundStep(RoundStep.Flip);
+        timeout(1500, () => {
+          setRoundStep(RoundStep.Outcome);
+          timeout(100, nextRound);
+        });
       }
-
-      setTimeout(() => setWaiting(false), 500);
     },
-    [onRoundComplete, roundIndex]
+    [nextRound]
   );
 
-  const onSubmit = useCallback(() => {
-    submitRunCode.clear();
-    runCode(code, round, onRunResult);
-  }, [code, round, onRunResult]);
+  const onRun = useCallback(
+    (res: RoundResult, end: boolean) => {
+      setExecuting(true);
+      onResult(res, end);
+      setTimeout(() => setExecuting(false), 500);
+    },
+    [nextRound]
+  );
+
+  const submit = useCallback(
+    (final: boolean) => {
+      enqueueRunCode.clear();
+      runCode(code, round, logsRef.current, (res) =>
+        onRun(res, res.success || final)
+      );
+    },
+    [code, round, logsRef.current, onRun]
+  );
 
   const setAndRunCode = useCallback(
     (cd: string) => {
       setCode(cd);
-      submitRunCode(cd, round, onRunResult);
+      enqueueRunCode(cd, round, logsRef.current, (res) =>
+        onRun(res, res.success)
+      );
     },
-    [round, onRunResult]
+    [round, logsRef.current, onRun]
   );
+
+  useEffect(() => {
+    clearTimeout(timeoutHandle.current);
+    if (active) {
+      const start = Date.now() + 1000;
+      const end = start + round.time * 1000 + 999;
+      setTimerStart(start);
+      setTimerEnd(end);
+      setRoundStep(RoundStep.Play);
+      timeoutHandle.current = setTimeout(() => {
+        submit(true);
+      }, end - Date.now());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, onResult]);
 
   const graphics = useMemo(
     () => <Graphics suite={round.suite} runs={result?.runs} />,
     [Graphics, round, result]
   );
 
+  let logAlerts: AlertMessageProps["messages"] = [];
+  if (logsRef.current?.length) {
+    const logs = logsRef.current;
+    const sampleLength = 3;
+    const random = seedrandom(String(timerStart));
+    const sampleIndex = Math.max(
+      0,
+      Math.floor(random() * (logs.length - sampleLength))
+    );
+    logAlerts = logs
+      .slice(sampleIndex, sampleIndex + sampleLength)
+      .map((log) => ({ log }));
+  }
+
+  const errorAlerts = result?.error ? [{ error: result.error }] : [];
+  const alertMessages = [...logAlerts, ...errorAlerts];
+
   const modCode = formatMods(round.mods);
+  const isPlaying = active && roundStep === RoundStep.Play;
 
   return (
-    <div
-      className={classNames({
-        [styles.cardContainer]: true,
-        [styles.farPrevCard]: roundIndex < currentRound - 2,
-        [styles.prevPrevCard]: roundIndex === currentRound - 2,
-        [styles.prevCard]: roundIndex === currentRound - 1,
-        [styles.currentCard]: roundIndex === currentRound,
-        [styles.nextCard]: roundIndex === currentRound + 1,
-        [styles.nextNextCard]: roundIndex === currentRound + 2,
-        [styles.farNextCard]: roundIndex > currentRound + 2,
-      })}
-    >
-      <PuzzleCard
-        graphics={
-          <>
-            {graphics}
-            {result?.error && <ErrorMessage error={result.error} />}
-          </>
-        }
-        editor={
-          <Editor
-            disabled={!active || roundIndex !== currentRound}
-            code={code}
-            setCode={setAndRunCode}
-          />
-        }
-        modCode={modCode}
-        codePrefix={`function ${funcName}( ${inputNames.join(", ")} ) {`}
-        codeSuffix="}"
-        outcome={outcome}
-        focus={active && roundIndex === currentRound}
-        darkened={roundIndex !== currentRound}
-        submitDisabled={waiting}
-        onSubmit={onSubmit}
-      />
+    <div className={styles.container}>
+      <div
+        className={classNames({
+          [styles.cardContainer]: true,
+          [styles.farPrevCard]: roundIndex < currentRound - 2,
+          [styles.prevPrevCard]: roundIndex === currentRound - 2,
+          [styles.prevCard]: roundIndex === currentRound - 1,
+          [styles.currentCard]: roundIndex === currentRound,
+          [styles.nextCard]: roundIndex === currentRound + 1,
+          [styles.nextNextCard]: roundIndex === currentRound + 2,
+          [styles.farNextCard]: roundIndex > currentRound + 2,
+          [styles.flipped]: roundStep >= RoundStep.Flip,
+        })}
+      >
+        <PuzzleCard
+          graphics={
+            <>
+              {graphics}
+              {alertMessages.length > 0 && (
+                <AlertMessage messages={alertMessages} />
+              )}
+            </>
+          }
+          editor={
+            <Editor disabled={!isPlaying} code={code} setCode={setAndRunCode} />
+          }
+          modCode={modCode}
+          codePrefix={`function ${funcName}( ${inputNames.join(", ")} ) {`}
+          codeSuffix="}"
+          outcome={roundStep === RoundStep.Outcome ? outcome : undefined}
+          focus={active}
+          executing={executing}
+          submitDisabled={executing || !isPlaying}
+          onSubmit={() => submit(false)}
+        />
+      </div>
+
+      <div className={styles.timerContainer}>
+        <Timer startTime={timerStart} endTime={isPlaying ? timerEnd : 0} />
+      </div>
+
+      {roundStep >= RoundStep.Flip && roundIndex <= currentRound + 1 && (
+        <Light
+          color={outcome === "success" ? Color.success : Color.failure}
+          duration={1600}
+          delay={1300}
+        />
+      )}
     </div>
   );
 };
 
-const submitRunCode = debounce(runCode, 2000);
+const enqueueRunCode = debounce(runCode, 2000);
 
 function runCode(
-  cd: string,
+  code: string,
   round: Round,
-  onResult: (result: RoundResult) => void
+  outLogs: string[],
+  onRun: (result: RoundResult) => void
 ) {
-  const result = Game.runRound(cd, round);
-  onResult(result);
+  outLogs.length = 0;
+
+  const logger = (...data: any[]) => {
+    // `logs` is not reactive but is picked up due to callback
+    outLogs.push(data?.map((d) => d?.toString()).join(" "));
+  };
+
+  const result = Game.runRound(code, round, logger);
+
+  onRun(result);
 }
 
 function formatMods(mods?: Mod[]) {
@@ -129,5 +224,18 @@ function formatMods(mods?: Mod[]) {
 }
 
 function applyModCodeEmoji(modCode: string) {
-  return modCode.replaceAll("$BAN$", "🚫 ");
+  return modCode.replaceAll(
+    /\/\*icon:(\w+)\*\//g,
+    (_, icon) => iconToEmoji[icon] ?? ""
+  );
+}
+
+const iconToEmoji: { [id in string]: string } = {
+  change: "🔧",
+  ban: "🚫",
+};
+
+// Swap args for better code sequence
+function timeout(ms: number, fn: Function) {
+  return setTimeout(fn, ms);
 }

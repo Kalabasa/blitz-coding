@@ -10,22 +10,23 @@
 @value cardBackMarkColor from "~ui/styles/colors.module.css";
 @value textFilter from "~ui/styles/colors.module.css";
 
-@value cardTopBoxShadow: inset 0 2px 0 rgba(255, 255, 255, 0.09);
-@value cardLeftBoxShadow: inset 2px 0 0 rgba(255, 255, 255, 0.03);
-@value cardRightBoxShadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
-@value cardBottomBoxShadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+@value cardTopBoxShadow: inset 0 1px 0 var(--globalTopLight, transparent);
+@value cardLeftBoxShadow: inset 1px 0 0 var(--globalLeftLight, transparent);
+@value cardRightBoxShadow: inset -1px 0 0 var(--globalRightLight, transparent);
+@value cardBottomBoxShadow: inset 0 -1px 0 var(--globalBotomLight, transparent);
 
 @value darkenFilter: brightness(0.6);
 
 .puzzleCard {
   width: 600px;
+  height: 650px;
 }
 
-.puzzleCard.darken {
+.puzzleCard.blur {
   pointer-events: none;
 }
-.puzzleCard.darken .frontface,
-.puzzleCard.darken .backface {
+.puzzleCard.blur .frontface,
+.puzzleCard.blur .backface {
   filter: darkenFilter;
 }
 .frontface,
@@ -34,12 +35,17 @@
 }
 
 .frontface {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   border-radius: 24px;
   overflow: hidden;
   backface-visibility: hidden;
 }
 
 .graphicsContainer {
+  flex: 0 0 auto;
   position: relative;
   display: flex;
   justify-content: center;
@@ -53,6 +59,7 @@
 }
 
 .modCodeContainer {
+  flex: 0 0 auto;
   position: relative;
   padding: 24px 24px 12px;
   border-bottom: solid 1px codeEditorSecondaryColor;
@@ -63,12 +70,13 @@
 }
 
 .codeContainer {
+  flex: 1 1 auto;
   position: relative;
   padding: 24px;
-  min-height: 192px;
   font-size: 12pt;
   background: codeEditorColor;
   box-shadow: cardBottomBoxShadow, cardLeftBoxShadow, cardRightBoxShadow;
+  overflow: auto;
   cursor: text;
   z-index: 3;
 }
@@ -112,7 +120,7 @@
 
 .submitButton {
   display: block;
-  position: absolute;
+  position: fixed;
   bottom: 12px;
   right: 12px;
   margin: 0;
@@ -133,7 +141,7 @@
 }
 
 .waitIcon {
-  position: absolute;
+  position: fixed;
   bottom: 12px;
   right: 12px;
   padding: 5mm;
@@ -161,7 +169,7 @@
     cardRightBoxShadow;
   overflow: hidden;
   backface-visibility: hidden;
-  transform: rotateY(180deg) translate3d(0, 0, -0.5px);
+  transform: scale(1.003) rotateY(180deg) translate3d(0, 0, 0.5px);
 }
 
 .logo {
@@ -170,6 +178,8 @@
   top: 65%;
   width: 60px;
   transform: translate(-50%, -50%);
+  transition: none 0.1s cubic-bezier(0.6, 2, 0, -1);
+  transition-property: color, filter;
 }
 
 .puzzleCard.success .logo {

@@ -6,7 +6,7 @@ import React, {
   PropsWithChildren,
   ReactNode,
 } from "react";
-import { runOutcome } from "round_types/utils";
+import { RoundTypeUtil } from "round_types/utils";
 import { CaseGrid } from "ui/puzzle_graphics/case_grid/case_grid";
 import { GraphicsBorder } from "ui/puzzle_graphics/graphics_border/graphics_border";
 import { PlainIO } from "ui/puzzle_graphics/plain_io/plain_io";
@@ -117,7 +117,7 @@ export const createPlainCaseGridGraphics = (
             ])}
             expected={example.output.valueOf()}
             result={run?.output?.valueOf()}
-            outcome={runOutcome(run)}
+            outcome={RoundTypeUtil.runOutcome(run)}
           />
         </GraphicsBorder>
       )

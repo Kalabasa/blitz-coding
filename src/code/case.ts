@@ -8,7 +8,9 @@ export type Case = {
 };
 
 function matchOutput(output: any, ex: Case): boolean {
-  return deepEqual(output?.valueOf(), ex.output?.valueOf(), { strict: false });
+  const a = Box.deepUnbox(output);
+  const b = Box.deepUnbox(ex.output);
+  return deepEqual(a, b, { strict: false });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare

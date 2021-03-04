@@ -1,15 +1,19 @@
 import deepEqual from "deep-equal";
 import { Difficulty, Round } from "game/types";
 import { createArrayEquals } from "round_types/array_equals/array_equals";
+import { createSortArray } from "round_types/array_sort/array_sort";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
 import { createIsEven } from "round_types/is_even/is_even";
 import { createQuadSequence } from "round_types/quad_sequence/quad_sequence";
+import { createReverseString } from "round_types/string_reverse/string_reverse";
 
 const allRoundGens: RoundGenerator[] = [
   createIsEven,
   createQuadSequence,
   createFibonacciSequence,
   createArrayEquals,
+  createReverseString,
+  createSortArray,
 ];
 
 export type RoundType<P extends unknown[] = any[]> = {
@@ -19,7 +23,7 @@ export type RoundType<P extends unknown[] = any[]> = {
 
 export type RoundGenerator = {
   minDifficulty: Difficulty;
-  maxDifficulty: Difficulty;
+  maxDifficulty?: Difficulty;
   weight: number;
   create: (difficulty: Difficulty, seed: string) => RoundType;
 };
@@ -38,8 +42,9 @@ function generateRandomRounds(difficulty: Difficulty, count: number): Round[] {
   while (types.length < count) {
     const roundGen = pickRandom(roundGens);
 
-    const type = roundGen.create(difficulty, Date.now().toString());
-    roundGen.weight *= 0.25;
+    const seed = types.length.toString() + Date.now().toString();
+    const type = roundGen.create(difficulty, seed);
+    roundGen.weight *= 0;
 
     const typeExists = types.some(
       (t) => t.fn === type.fn && deepEqual(t.params, type.params)
@@ -55,8 +60,6 @@ function generateRandomRounds(difficulty: Difficulty, count: number): Round[] {
       }
     }
   }
-
-  console.log(types);
 
   return types.map((type) => type.fn(...type.params));
 }

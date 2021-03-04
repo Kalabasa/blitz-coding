@@ -2,20 +2,22 @@
 @value textColor from "~ui/styles/colors.module.css";
 @value secondaryTextColor from "~ui/styles/colors.module.css";
 @value accentColor from "~ui/styles/colors.module.css";
+@value noiseURL from "~ui/styles/noise.module.css";
 
 .app {
   width: 100%;
   height: 100%;
-  background: backgroundColor;
+  background: backgroundColor noiseURL repeat;
   color: textColor;
 }
 
 .header {
   position: absolute;
-  top: 0;
+  bottom: 0;
   width: 100%;
   height: 64px;
-  z-index: 1;
+  margin: 24px 0;
+  z-index: 2;
 }
 
 .game {
@@ -24,7 +26,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
 }
 
 .logoBar {
@@ -42,4 +44,13 @@
 }
 .appName {
   color: textColor;
+}
+
+.backLight {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }

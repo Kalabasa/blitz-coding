@@ -1,7 +1,7 @@
 import memoize from "fast-memoize";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { modBanRecursion } from "mod_types/ban_recursion/ban_recursion";
+import { modBanRecursion } from "mods/ban_recursion/ban_recursion";
 import { rangeCases } from "round_types/utils";
 import seedrandom from "seedrandom";
 import { GraphicsProps } from "ui/puzzle_graphics/graphics";
@@ -28,7 +28,6 @@ const Graphics = ({ suite, runs }: GraphicsProps) => (
 
 export const createFibonacciSequence: RoundGenerator = {
   minDifficulty: Difficulty.Medium,
-  maxDifficulty: Difficulty.Hard,
   weight: 1,
   create: (difficulty: Difficulty, seed: string) => {
     const random = seedrandom(seed);

@@ -25,7 +25,6 @@ const Graphics = ({ suite, runs }: GraphicsProps) => (
 
 export const createQuadSequence: RoundGenerator = {
   minDifficulty: Difficulty.Easy,
-  maxDifficulty: Difficulty.Hard,
   weight: 1,
   create: (difficulty: Difficulty, seed: string) => {
     const random = seedrandom(seed);

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Run, Suite } from "code/run";
 import React, { CSSProperties, useLayoutEffect, useRef } from "react";
-import { runOutcome } from "round_types/utils";
+import { RoundTypeUtil } from "round_types/utils";
 import { BlinkOnChange } from "ui/blink_on_change/blink_on_change";
 import { formatValue } from "ui/puzzle_graphics/graphics";
 import { Mark } from "ui/puzzle_graphics/mark/mark";
@@ -71,7 +71,7 @@ export const Sequence = ({ length, suite, runs }: SequenceProps) => {
               n={example.inputs[0]}
               expected={example.output}
               result={run?.output}
-              outcome={runOutcome(run)}
+              outcome={RoundTypeUtil.runOutcome(run)}
             />
           );
         })}

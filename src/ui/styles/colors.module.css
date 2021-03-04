@@ -1,6 +1,8 @@
-@value backgroundColor: rgb(11, 11, 13);
+@value backgroundRGB: 11, 11, 13;
+@value backgroundColor: rgb(backgroundRGB);
 @value textColor: rgb(234, 233, 239);
 @value secondaryTextColor: rgb(134, 136, 150);
+@value darkTextColor: backgroundColor;
 @value accentColor: rgb(255, 232, 81);
 @value successColor: rgb(34, 160, 61);
 @value failureColor: rgb(230, 40, 58);

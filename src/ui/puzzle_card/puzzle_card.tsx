@@ -21,7 +21,7 @@ export type PuzzleCardProps = {
   codeSuffix: string;
   outcome?: "success" | "failure";
   focus?: boolean;
-  darkened?: boolean;
+  executing?: boolean;
   submitDisabled?: boolean;
   onSubmit: () => void;
 };
@@ -34,7 +34,7 @@ export const PuzzleCard = ({
   codeSuffix,
   outcome,
   focus = false,
-  darkened = false,
+  executing = false,
   submitDisabled = false,
   onSubmit,
 }: PuzzleCardProps) => {
@@ -76,7 +76,7 @@ export const PuzzleCard = ({
       className={classNames(
         styles.puzzleCard,
         outcome && styles[outcome],
-        darkened && styles.darken
+        !focus && styles.blur
       )}
       onKeyPressCapture={onKey}
       onKeyDownCapture={onKey}
@@ -103,14 +103,14 @@ export const PuzzleCard = ({
           <pre className={classNames("code", styles.extraCode)}>
             {codeSuffix}
           </pre>
-          {submitDisabled ? (
+          {executing ? (
             <div className={styles.waitIcon}>
               <Icon svg={WaitSVG} />
             </div>
           ) : (
             <button
               className={styles.submitButton}
-              disabled={submitDisabled}
+              disabled={submitDisabled || !focus}
               onClick={onClickSubmitButton}
             >
               <Icon svg={PlaySVG} />
@@ -141,7 +141,7 @@ function focusChildTextArea(
 
   if (!textArea) return;
 
-  setTimeout(() => textArea.focus());
+  setTimeout(() => textArea.focus({ preventScroll: true }));
 
   if (!event) return;
 
