@@ -1,0 +1,160 @@
+@value ease from "~ui/styles/animation.module.css";
+@value accentColor from "~ui/styles/colors.module.css";
+@value textColor from "~ui/styles/colors.module.css";
+@value darkTextColor from "~ui/styles/colors.module.css";
+
+@value cardWidth from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardHeight from "~ui/puzzle_card/puzzle_card.module.css";
+
+.rootButton {
+  display: block;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 400px;
+  height: 400px;
+  border: none;
+  font: inherit;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.selected {
+  cursor: auto;
+  transition: transform 0.6s cubic-bezier(0.6, 0, 0.6, 1);
+}
+
+.infoOverlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 180%;
+  transition: transform 0.4s ease;
+}
+.rootButton:not(.selected):hover .name {
+  transform: translateY(-6px);
+}
+
+.description {
+  margin-top: 12px;
+  width: 80%;
+  max-height: 3em;
+  text-align: center;
+  transition: opacity 0.4s 0.4s linear, max-height 0.4s linear;
+}
+.rootButton:not(.selected) .description {
+  max-height: 0;
+  opacity: 0;
+  transition: opacity 0.2s linear, max-height 1s ease;
+}
+
+.rounds {
+  margin-top: 12px;
+}
+
+.playButton {
+  margin: 24px 0 0;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: bold;
+  background: accentColor;
+  color: darkTextColor;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.4s linear;
+  pointer-events: none;
+}
+.selected .playButton {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.cardsContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transform: scale(0.55);
+  transition: transform 0.6s cubic-bezier(0.6, 0, 0.4, 1);
+}
+.selected .cardsContainer {
+  transform: scale(1.003);
+}
+
+.cardContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: cardWidth;
+  height: cardHeight;
+  border-radius: 24px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 24px 24px rgba(0, 0, 0, 0.06);
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  will-change: transform;
+}
+.selected .cardContainer {
+  box-shadow: 0 24px 24px transparent;
+}
+
+.cardContainer:last-child {
+  transform: translate(-50%, -50%) rotate(1deg);
+}
+.rootButton:not(.selected):hover .cardContainer:last-child {
+  transform: translate(-50%, -50%) translate(0, -32px);
+}
+.selected .cardContainer:last-child {
+  transform: translate(-50%, -50%) translate(0, -18px);
+}
+
+.cardContainer:nth-last-child(2) {
+  transform: translate(-50%, -50%) translate(3px, 2px) rotate(2deg);
+  transition-delay: 0.04s;
+}
+.rootButton:not(.selected):hover .cardContainer:nth-last-child(2) {
+  transform: translate(-50%, -50%) translate(0, -24px) rotate(0.5deg);
+}
+.selected .cardContainer:nth-last-child(2) {
+  transform: translate(-50%, -50%) translate(0, -12px);
+}
+
+.cardContainer:nth-last-child(3) {
+  transform: translate(-50%, -50%) translate(-4px, 4px) rotate(-2deg);
+  transition-delay: 0.08s;
+}
+.rootButton:not(.selected):hover .cardContainer:nth-last-child(3) {
+  transform: translate(-50%, -50%) translate(-0, -16px) rotate(-0.5deg);
+}
+.selected .cardContainer:nth-last-child(3) {
+  transform: translate(-50%, -50%) translate(0, -6px);
+}
+
+.cardContainer:nth-last-child(4) {
+  transform: translate(-50%, -50%) translate(4px, 16px) rotate(3deg);
+  transition-delay: 0.12s;
+}
+.rootButton:not(.selected):hover .cardContainer:nth-last-child(4) {
+  transform: translate(-50%, -50%) rotate(1deg);
+}
+.selected .cardContainer:nth-last-child(4) {
+  transform: translate(-50%, -50%);
+}

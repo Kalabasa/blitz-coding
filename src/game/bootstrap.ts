@@ -35,7 +35,7 @@ ${modCode}
 ${setupCode}
 /* ------ SETUP END ------ */
 
-return ${funcName}.call(Object.create(null),${inputVars.join(",")});
+return ${funcName}.call({},${inputVars.join(",")});
 
 }finally{
 /* ------ MOD CLEANUP START ------ */

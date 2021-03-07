@@ -1,6 +1,8 @@
 @value back from "~ui/styles/animation.module.css";
 @value ease from "~ui/styles/animation.module.css";
 
+@value introEase: cubic-bezier(0.4, 0, 0.2, 1);
+
 .container {
   position: absolute;
   display: flex;
@@ -28,21 +30,25 @@
 .farPrevCard {
   transform: translate3d(-1920px, 0, -672px) rotateY(-90deg) rotateX(-0.2deg);
   transition-delay: 0s;
+  z-index: 1;
 }
 
 .prevPrevCard {
   transform: translate3d(-1248px, 0, -336px) rotateY(-110deg) rotateX(-0.2deg);
   transition-delay: 0.06s;
+  z-index: 2;
 }
 
 .prevCard {
   transform: translate3d(-660px, 0, -288px) rotateY(-140deg) rotateX(-0.2deg);
   transition-delay: 0.12s;
+  z-index: 3;
 }
 
 .currentCard {
   transform: translate3d(0, 0, 0);
   transition-delay: 0.18s;
+  z-index: 7;
 }
 .currentCard.flipped {
   transform: translate3d(0, 0, 0) rotateY(-180deg);
@@ -54,14 +60,58 @@
 .nextCard {
   transform: translate3d(660px, 0, -288px) rotateY(140deg) rotateX(-0.2deg);
   transition-delay: 0.24s;
+  z-index: 6;
 }
 
 .nextNextCard {
   transform: translate3d(1248px, 0, -336px) rotateY(110deg) rotateX(-0.2deg);
   transition-delay: 0.3s;
+  z-index: 5;
 }
 
 .farNextCard {
   transform: translate3d(1920px, 0, -672px) rotateY(90deg) rotateX(-0.2deg);
   transition-delay: 0.36s;
+  z-index: 4;
+}
+
+.introMode .timerContainer {
+  animation: timerIntro 0.6s introEase both;
+}
+@keyframes timerIntro {
+  from {
+    height: 0;
+  }
+}
+.introMode .currentCard {
+  animation: currentCardIntro 1s 0.12s introEase both;
+}
+@keyframes currentCardIntro {
+  from {
+    transform: translate3d(0, -18px, 0) rotateY(180deg);
+  }
+}
+.introMode .nextCard {
+  animation: nextCardIntro 1s 0.08s introEase both;
+}
+@keyframes nextCardIntro {
+  from {
+    transform: translate3d(0, -12px, 0) rotateY(180deg);
+  }
+}
+.introMode .nextNextCard {
+  animation: nextNextCardIntro 1s 0.04s introEase both;
+}
+@keyframes nextNextCardIntro {
+  from {
+    transform: translate3d(0, -6px, 0) rotateY(180deg);
+  }
+}
+.introMode .farNextCard {
+  animation: farNextCardIntro 1s 0s introEase both;
+}
+@keyframes farNextCardIntro {
+  from {
+    transform: translate3d(0, 0, 0) rotateY(180deg);
+  }
 }

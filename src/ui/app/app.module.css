@@ -29,6 +29,35 @@
   z-index: 1;
 }
 
+.menu {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: auto;
+}
+
+.deckList {
+  padding: 12px 96px;
+  display: flex;
+  flex-wrap: nowrap;
+  margin: auto;
+}
+
+.deckItem {
+  transition: opacity 0.4s 0.4s linear;
+}
+
+.unselected {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s linear;
+}
+
 .logoBar {
   position: absolute;
   left: 50%;

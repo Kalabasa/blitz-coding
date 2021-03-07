@@ -11,6 +11,7 @@ import { Icon } from "ui/icon/icon";
 import { ReactComponent as PlaySVG } from "ui/icon/svg/play.svg";
 import { ReactComponent as WaitSVG } from "ui/icon/svg/wait.svg";
 import { Logo } from "ui/logo/logo";
+import { CardBackFace } from "ui/puzzle_card/card_backface";
 import styles from "./puzzle_card.module.css";
 
 export type PuzzleCardProps = {
@@ -21,6 +22,7 @@ export type PuzzleCardProps = {
   codeSuffix: string;
   outcome?: "success" | "failure";
   focus?: boolean;
+  darken?: boolean;
   executing?: boolean;
   submitDisabled?: boolean;
   onSubmit: () => void;
@@ -33,9 +35,10 @@ export const PuzzleCard = ({
   codePrefix,
   codeSuffix,
   outcome,
-  focus = false,
-  executing = false,
-  submitDisabled = false,
+  focus,
+  darken,
+  executing,
+  submitDisabled,
   onSubmit,
 }: PuzzleCardProps) => {
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +79,7 @@ export const PuzzleCard = ({
       className={classNames(
         styles.puzzleCard,
         outcome && styles[outcome],
-        !focus && styles.blur
+        darken && styles.blur
       )}
       onKeyPressCapture={onKey}
       onKeyDownCapture={onKey}
@@ -119,7 +122,7 @@ export const PuzzleCard = ({
         </div>
       </div>
       <div className={styles.backface}>
-        <Logo className={styles.logo} variant="colored" />
+        <CardBackFace outcome={outcome} />
       </div>
     </div>
   );

@@ -1,0 +1,34 @@
+@value easeOut from "~ui/styles/animation.module.css";
+@value textColor from "~ui/styles/colors.module.css";
+@value darkTextColor from "~ui/styles/colors.module.css";
+@value accentColor from "~ui/styles/colors.module.css";
+@value failureColor from "~ui/styles/colors.module.css";
+
+.container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  animation: slideUp 0.4s easeOut;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+.item {
+  padding: 6px 12px;
+  width: 100%;
+  background: black;
+  color: white;
+  box-sizing: border-box;
+}
+.item.log {
+  background: accentColor;
+  color: darkTextColor;
+}
+.item.error {
+  background: failureColor;
+  color: textColor;
+}

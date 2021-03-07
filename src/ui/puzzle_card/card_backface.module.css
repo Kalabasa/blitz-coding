@@ -1,0 +1,45 @@
+@value successColor from "~ui/styles/colors.module.css";
+@value failureColor from "~ui/styles/colors.module.css";
+@value cardBackColor from "~ui/styles/colors.module.css";
+@value cardBackMarkColor from "~ui/styles/colors.module.css";
+
+@value cardTopBoxShadow from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardLeftBoxShadow from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardRightBoxShadow from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardBottomBoxShadow from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardWidth from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardHeight from "~ui/puzzle_card/puzzle_card.module.css";
+
+.backface {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: cardWidth;
+  height: cardHeight;
+  border-radius: 24px;
+  background: cardBackColor;
+  color: cardBackMarkColor;
+  box-shadow: cardTopBoxShadow, cardBottomBoxShadow, cardLeftBoxShadow,
+    cardRightBoxShadow;
+  overflow: hidden;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  top: 65%;
+  width: 60px;
+  transform: translate(-50%, -50%);
+  transition: none 0.1s cubic-bezier(0.6, 2, 0, -1);
+  transition-property: color, filter;
+}
+
+.success .logo {
+  color: successColor;
+  filter: brightness(2) drop-shadow(0 0 4px successColor);
+}
+
+.failure .logo {
+  color: failureColor;
+  filter: drop-shadow(0 0 2px failureColor);
+}

@@ -5,6 +5,10 @@ import { pick, range, rangeCases, sample, shuffle } from "round_types/utils";
 import seedrandom from "seedrandom";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
+/*
+FIXME {"inputs":[["d","e","k"],["d","e","k"]],"output":false}
+*/
+
 type RoundTypeParameters = {
   unique: boolean;
   varyLength: boolean;

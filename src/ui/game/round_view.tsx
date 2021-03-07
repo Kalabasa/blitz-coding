@@ -21,8 +21,10 @@ import { PuzzleCard } from "ui/puzzle_card/puzzle_card";
 import { Color } from "ui/styles/colors";
 import { Timer } from "ui/timer/timer";
 import styles from "./round_view.module.css";
+import { act } from "react-dom/test-utils";
 
 enum RoundStep {
+  Intro,
   Play,
   Flip,
   Outcome,
@@ -44,7 +46,7 @@ export const RoundView = ({
   const [executing, setExecuting] = useState(false);
   const [timerStart, setTimerStart] = useState<number>();
   const [timerEnd, setTimerEnd] = useState<number>();
-  const [roundStep, setRoundStep] = useState<RoundStep>(RoundStep.Play);
+  const [roundStep, setRoundStep] = useState<RoundStep>(RoundStep.Intro);
   const timeoutHandle = useRef<any>();
   const logsRef = useRef<string[]>([]);
 
@@ -109,13 +111,16 @@ export const RoundView = ({
       const end = start + round.time * 1000 + 999;
       setTimerStart(start);
       setTimerEnd(end);
-      setRoundStep(RoundStep.Play);
       timeoutHandle.current = setTimeout(() => {
         submit(true);
       }, end - Date.now());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, onResult]);
+
+  useEffect(() => {
+    setTimeout(() => setRoundStep(RoundStep.Play), 1000);
+  }, []);
 
   const graphics = useMemo(
     () => <Graphics suite={round.suite} runs={result?.runs} />,
@@ -140,10 +145,16 @@ export const RoundView = ({
   const alertMessages = [...logAlerts, ...errorAlerts];
 
   const modCode = formatMods(round.mods);
+  const introMode = roundStep === RoundStep.Intro;
   const isPlaying = active && roundStep === RoundStep.Play;
 
   return (
-    <div className={styles.container}>
+    <div
+      className={classNames({
+        [styles.container]: true,
+        [styles.introMode]: introMode,
+      })}
+    >
       <div
         className={classNames({
           [styles.cardContainer]: true,
@@ -173,7 +184,8 @@ export const RoundView = ({
           codePrefix={`function ${funcName}( ${inputNames.join(", ")} ) {`}
           codeSuffix="}"
           outcome={roundStep === RoundStep.Outcome ? outcome : undefined}
-          focus={active}
+          focus={isPlaying}
+          darken={!active && !introMode}
           executing={executing}
           submitDisabled={executing || !isPlaying}
           onSubmit={() => submit(false)}
@@ -184,12 +196,8 @@ export const RoundView = ({
         <Timer startTime={timerStart} endTime={isPlaying ? timerEnd : 0} />
       </div>
 
-      {roundStep >= RoundStep.Flip && roundIndex <= currentRound + 1 && (
-        <Light
-          color={outcome === "success" ? Color.success : Color.failure}
-          duration={1600}
-          delay={1300}
-        />
+      {roundStep >= RoundStep.Outcome && currentRound <= roundIndex + 1 && (
+        <Light color={outcome === "success" ? Color.success : Color.failure} />
       )}
     </div>
   );

@@ -1,25 +1,24 @@
 @value ease from "~ui/styles/animation.module.css";
 @value accentColor from "~ui/styles/colors.module.css";
-@value successColor from "~ui/styles/colors.module.css";
-@value failureColor from "~ui/styles/colors.module.css";
 @value codeEditorColor from "~ui/styles/colors.module.css";
 @value codeEditorSecondaryColor from "~ui/styles/colors.module.css";
 @value puzzleGraphicsColor from "~ui/styles/colors.module.css";
 @value puzzleGraphicsPrimaryColor from "~ui/styles/colors.module.css";
-@value cardBackColor from "~ui/styles/colors.module.css";
-@value cardBackMarkColor from "~ui/styles/colors.module.css";
 @value textFilter from "~ui/styles/colors.module.css";
 
 @value cardTopBoxShadow: inset 0 1px 0 var(--globalTopLight, transparent);
 @value cardLeftBoxShadow: inset 1px 0 0 var(--globalLeftLight, transparent);
 @value cardRightBoxShadow: inset -1px 0 0 var(--globalRightLight, transparent);
-@value cardBottomBoxShadow: inset 0 -1px 0 var(--globalBotomLight, transparent);
+@value cardBottomBoxShadow: inset 0 -1px 0 var(--globalBottomLight, transparent);
 
 @value darkenFilter: brightness(0.6);
 
+@value cardWidth: 600px;
+@value cardHeight: 650px;
+
 .puzzleCard {
-  width: 600px;
-  height: 650px;
+  width: cardWidth;
+  height: cardHeight;
 }
 
 .puzzleCard.blur {
@@ -51,6 +50,7 @@
   justify-content: center;
   align-items: center;
   height: 336px;
+  border-radius: 24px 24px 0 0;
   font-size: 10pt;
   background: puzzleGraphicsColor;
   color: puzzleGraphicsPrimaryColor;
@@ -73,6 +73,7 @@
   flex: 1 1 auto;
   position: relative;
   padding: 24px;
+  border-radius: 0 0 24px 24px;
   font-size: 12pt;
   background: codeEditorColor;
   box-shadow: cardBottomBoxShadow, cardLeftBoxShadow, cardRightBoxShadow;
@@ -162,32 +163,6 @@
   top: 0;
   width: 100%;
   height: 100%;
-  border-radius: 24px;
-  background: cardBackColor;
-  color: cardBackMarkColor;
-  box-shadow: cardTopBoxShadow, cardBottomBoxShadow, cardLeftBoxShadow,
-    cardRightBoxShadow;
-  overflow: hidden;
   backface-visibility: hidden;
   transform: scale(1.003) rotateY(180deg) translate3d(0, 0, 0.5px);
-}
-
-.logo {
-  position: absolute;
-  left: 50%;
-  top: 65%;
-  width: 60px;
-  transform: translate(-50%, -50%);
-  transition: none 0.1s cubic-bezier(0.6, 2, 0, -1);
-  transition-property: color, filter;
-}
-
-.puzzleCard.success .logo {
-  color: successColor;
-  filter: brightness(2) drop-shadow(0 0 4px successColor);
-}
-
-.puzzleCard.failure .logo {
-  color: failureColor;
-  filter: drop-shadow(0 0 2px failureColor);
 }

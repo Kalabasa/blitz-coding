@@ -1,0 +1,43 @@
+@value lightUpDuration: 0.2s;
+@value lightDownDuration: 1.2s;
+@value lightDuration: 1.4s; /* 0.2 + 1.2 */
+@value lightPeak: 14.2957%; /* 0.2 / 1.4 */
+
+.lightContainer {
+  --globalTopLight: rgba(255, 255, 255, 0.1);
+  --globalLeftLight: rgba(255, 255, 255, 0.04);
+  --globalRightLight: rgba(0, 0, 0, 0.1);
+  --globalBottomLight: rgba(0, 0, 0, 0.2);
+}
+
+.backLight {
+  top: lightPeak;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    var(--backLightColor, white),
+    transparent
+  );
+  animation: flash calc(lightUpDuration + lightDownDuration) linear both;
+}
+
+.backLightPortal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+@keyframes flash {
+  from {
+    opacity: 0;
+  }
+  lightPeak {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
