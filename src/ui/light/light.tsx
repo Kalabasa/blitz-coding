@@ -37,7 +37,6 @@ const LightBase = ({ ctx, color }: LightProps & { ctx: LightContext }) => {
   useEffect(() => {
     const colors = ctx.colorsRef.current;
     if (colors) {
-      console.log("add", globalLight);
       colors.add(globalLight);
       ctx.updateColors();
       setTimeout(() => ctx.updateColors(), globalLight.endTime - Date.now());

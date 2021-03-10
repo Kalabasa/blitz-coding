@@ -1,19 +1,27 @@
 import deepEqual from "deep-equal";
 import { Difficulty, Round } from "game/types";
+import { createArithmetic } from "round_types/arithmetic/arithmetic";
 import { createArrayEquals } from "round_types/array_equals/array_equals";
 import { createSortArray } from "round_types/array_sort/array_sort";
+import { createCountMultiOccurences } from "round_types/count_multiple_occurences/count_multiple_occurences";
+import { createCountOccurences } from "round_types/count_occurences/count_occurences";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
 import { createIsEven } from "round_types/is_even/is_even";
+import { createPower } from 'round_types/power/power';
 import { createQuadSequence } from "round_types/quad_sequence/quad_sequence";
 import { createReverseString } from "round_types/string_reverse/string_reverse";
 
 const allRoundGens: RoundGenerator[] = [
-  createIsEven,
-  createQuadSequence,
-  createFibonacciSequence,
-  createArrayEquals,
-  createReverseString,
-  createSortArray,
+  // createIsEven,
+  // createQuadSequence,
+  // createFibonacciSequence,
+  // createArrayEquals,
+  // createReverseString,
+  // createSortArray,
+  // createCountOccurences,
+  // createCountMultiOccurences,
+  // createArithmetic,
+  createPower,
 ];
 
 export type RoundType<P extends unknown[] = any[]> = {
@@ -25,16 +33,17 @@ export type RoundGenerator = {
   minDifficulty: Difficulty;
   maxDifficulty?: Difficulty;
   weight: number;
-  create: (difficulty: Difficulty, seed: string) => RoundType;
+  create: (difficulty: Difficulty) => RoundType;
 };
 
 function generateRandomRounds(difficulty: Difficulty, count: number): Round[] {
   const roundGens = allRoundGens
-    // .filter(
-    //   (roundGen) =>
-    //     difficulty >= roundGen.minDifficulty &&
-    //     difficulty <= roundGen.maxDifficulty
-    // )
+    .filter(
+      (roundGen) =>
+        difficulty >= roundGen.minDifficulty &&
+        (roundGen.maxDifficulty === undefined ||
+          difficulty <= roundGen.maxDifficulty)
+    )
     .map((roundGen) => ({ ...roundGen }));
 
   const types: RoundType[] = [];
@@ -42,8 +51,7 @@ function generateRandomRounds(difficulty: Difficulty, count: number): Round[] {
   while (types.length < count) {
     const roundGen = pickRandom(roundGens);
 
-    const seed = types.length.toString() + Date.now().toString();
-    const type = roundGen.create(difficulty, seed);
+    const type = roundGen.create(difficulty);
     roundGen.weight *= 0;
 
     const typeExists = types.some(

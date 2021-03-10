@@ -51,16 +51,16 @@ export const Deck = ({
       onClick={onClick}
     >
       <div className={styles.cardsContainer}>
-        {Array.from({ length: Math.min(rounds, 4) }, () => (
-          <div className={styles.cardContainer}>
+        {Array.from({ length: Math.min(rounds, 4) }, (_, i) => (
+          <div key={i} className={styles.cardContainer}>
             <CardBackFace />
           </div>
         ))}
       </div>
       <div className={styles.infoOverlay}>
         <div className={styles.name}>{name}</div>
-        <div className={styles.description}>{description}</div>
         <div className={styles.rounds}>{rounds} rounds</div>
+        <div className={styles.description}>{description}</div>
         <button className={styles.playButton} onClick={onConfirm}>
           Play
         </button>

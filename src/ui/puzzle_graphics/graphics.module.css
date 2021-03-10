@@ -9,7 +9,7 @@
 }
 
 .symbol {
-  font-weight: lighter;
+  opacity: 0.4;
 }
 
 .emptyResult {

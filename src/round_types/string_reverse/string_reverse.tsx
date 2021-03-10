@@ -1,9 +1,8 @@
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
 import { modBanMethod } from "mods/ban_method/ban_method";
-import { pick, RoundTypeUtil, sample } from "round_types/utils";
+import { pick, sample } from "round_types/utils";
 import { words } from "round_types/words";
-import seedrandom from "seedrandom";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
 const reverseString = (
@@ -12,10 +11,9 @@ const reverseString = (
   includeZalgo: boolean,
   banReverse: boolean
 ): Round => ({
-  points: 1,
   time: 30 + (banReverse ? 30 : 0),
   suite: {
-    funcName: "revStr",
+    funcName: "reverseString",
     inputNames: ["s"],
     cases: sample(20, words)
       .map((word) => word.split(""))
@@ -33,8 +31,7 @@ const reverseString = (
           inputs: [chars.join("")],
           output: chars.reverse().join(""),
         };
-      })
-      .map(RoundTypeUtil.boxCase),
+      }),
   },
   mods: banReverse ? [modBanMethod("Array", "reverse")] : [],
   Graphics: createPlainCaseGridGraphics(3, 1),
@@ -43,18 +40,15 @@ const reverseString = (
 export const createReverseString: RoundGenerator = {
   minDifficulty: Difficulty.Easy,
   weight: 1,
-  create: (difficulty: Difficulty, seed: string) => {
-    const random = seedrandom(seed);
-    return {
-      fn: reverseString,
-      params: [
-        difficulty >= Difficulty.Medium,
-        difficulty >= Difficulty.Hard,
-        difficulty >= Difficulty.Hard,
-        difficulty >= Difficulty.Medium && random() < 0.5,
-      ],
-    };
-  },
+  create: (difficulty: Difficulty) => ({
+    fn: reverseString,
+    params: [
+      difficulty >= Difficulty.Medium,
+      difficulty >= Difficulty.Hard,
+      difficulty >= Difficulty.Hard,
+      difficulty >= Difficulty.Medium && Math.random() < 0.5,
+    ],
+  }),
 };
 
 const emojis = [

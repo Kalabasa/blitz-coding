@@ -28,11 +28,11 @@ export type RoundResult = {
   error?: Error;
 };
 
-function runRound(
+async function runRound(
   code: string,
   round: Round,
   logger?: (...data: any[]) => void
-): RoundResult {
+): Promise<RoundResult> {
   try {
     for (let mod of round.mods ?? []) {
       mod.preCheck?.(code);
@@ -47,7 +47,9 @@ function runRound(
       logger
     );
 
-    const result = Run.cases(fn, round.suite.cases);
+    const result = await Run.cases(fn, round.suite.cases);
+
+    console.debug(result);
 
     return {
       success: result.every((run) => run.match),

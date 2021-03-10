@@ -50,16 +50,20 @@
 }
 
 .description {
-  margin-top: 12px;
+  display: flex;
+  align-items: center;
   width: 80%;
-  max-height: 3em;
+  height: 100%;
+  max-height: 192px;
   text-align: center;
-  transition: opacity 0.4s 0.4s linear, max-height 0.4s linear;
+  transition: opacity 0.4s 0.4s linear,
+    max-height 1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 .rootButton:not(.selected) .description {
   max-height: 0;
   opacity: 0;
-  transition: opacity 0.2s linear, max-height 1s ease;
+  transition: opacity 0.2s linear, max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .rounds {
@@ -67,7 +71,7 @@
 }
 
 .playButton {
-  margin: 24px 0 0;
+  margin: 96px 0 48px;
   padding: 12px 24px;
   border: none;
   border-radius: 12px;
@@ -79,12 +83,16 @@
   outline: none;
   user-select: none;
   opacity: 0;
-  transition: opacity 0.4s linear;
   pointer-events: none;
+  transition: opacity 0.1s linear;
+}
+.playButton:focus-visible {
+  box-shadow: 0 0 0 12px darkTextColor;
 }
 .selected .playButton {
   opacity: 1;
   pointer-events: all;
+  transition: opacity 0.2s 0.6s linear;
 }
 
 .cardsContainer {

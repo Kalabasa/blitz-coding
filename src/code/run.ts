@@ -1,9 +1,8 @@
-import { Box } from "code/box";
 import { Case } from "code/case";
 
 export type Run = {
   example: Case;
-  output: Box;
+  output: any;
   match: boolean;
 };
 
@@ -13,12 +12,14 @@ export type Suite = {
   cases: Case[];
 };
 
-function runCases(fn: Function, cases: Case[]): Run[] {
-  return cases.map((ex) => runCase(fn, ex));
+export type AsyncFunction = (...any: any[]) => Promise<any>;
+
+function runCases(fn: AsyncFunction, cases: Case[]): Promise<Run[]> {
+  return Promise.all(cases.map((ex) => runCase(fn, ex)));
 }
 
-function runCase(fn: Function, example: Case): Run {
-  const output = fn(...example.inputs.map(Box.unbox));
+async function runCase(fn: AsyncFunction, example: Case): Promise<Run> {
+  const output = await fn(...example.inputs);
 
   return {
     example,

@@ -1,4 +1,4 @@
-import { Suite } from "code/run";
+import { AsyncFunction, Suite } from "code/run";
 
 function createFunction(
   suite: Suite,
@@ -7,7 +7,7 @@ function createFunction(
   modCleanupCode: string,
   setupCode: string,
   logger: (...data: any[]) => void = console.log
-) {
+): AsyncFunction {
   const { funcName, inputNames } = suite;
 
   const prefix = "_" + Date.now();
@@ -43,15 +43,16 @@ ${modCleanupCode}
 /* ------ MOD CLEANUP END ------ */
 }
 `;
+
   console.debug(code);
 
   const context = getContext(logger);
 
   // eslint-disable-next-line no-new-func
-  const fn = new Function(contextVar, ...inputVars, code);
+  const fn = detachContext(contextVar, ...inputVars, code);
 
-  return (...inputs: any[]) => {
-    return fn(context, ...inputs);
+  return async (...inputs: any[]) => {
+    return await fn(context, ...inputs);
   };
 }
 
@@ -64,12 +65,16 @@ function generateSetupCode(suite: Suite): string {
     var cache = Object.create(null);
 
     return function(){
-      var key = JSON.stringify(arguments,
-        function (_,v) {
-          return v == null || Number.isNaN(v) || v === Number.POSITIVE_INFINITY || v === Number.NEGATIVE_INFINITY ? "Infinity" : v; });
+      var args = Array.prototype.slice.call(arguments);
+
+      if (args.some(v => v === undefined || Number.isNaN(v) || v === Number.POSITIVE_INFINITY || v === Number.NEGATIVE_INFINITY)) {
+        return fn.apply(this, args);
+      }
+
+      var key = JSON.stringify(args);
 
       if (!(key in cache)) {
-        cache[key] = fn.apply(this, arguments);
+        cache[key] = fn.apply(this, args);
       }
 
       return cache[key];
@@ -86,13 +91,69 @@ ${funcName}.toString = function(){ return "${funcName}" };
 function getContext(log: (...data: any[]) => void) {
   const context: any = {};
 
-  for (let name in window) {
+  for (let name in globalThis) {
     context[name] = null;
   }
 
   context.console = { log };
 
   return context;
+}
+
+const iframePool: HTMLIFrameElement[] = [];
+setInterval(flushIFramePool, 10 * 60 * 1000);
+
+function getIFrame(): HTMLIFrameElement {
+  if (iframePool.length) return iframePool.pop()!;
+
+  const iframe = document.createElement("iframe");
+  iframe.classList.add("codeRunner");
+  document.body.appendChild(iframe);
+  return iframe;
+}
+
+function releaseIFrame(iframe: HTMLIFrameElement) {
+  iframePool.push(iframe);
+}
+
+function flushIFramePool() {
+  while (iframePool.length) {
+    iframePool.pop()!.remove();
+  }
+}
+
+function detachContext(...funcArgs: string[]): AsyncFunction {
+  return (context, ...params: any[]) =>
+    new Promise((resolve, reject) => {
+      const prefix = "_" + Date.now();
+      const funcName = prefix + "fn";
+      const contextVar = prefix + "context";
+      const paramsVar = prefix + "params";
+      const funcArgList = funcArgs.map((a) => JSON.stringify(a)).join(",");
+
+      const html = `
+<body><script>
+document.domain = ${JSON.stringify(document.domain)};
+window.${funcName} = function (${contextVar}, ${paramsVar}) {
+  return new Function(${funcArgList})(${contextVar}, ...${paramsVar});
+};
+</script></body>
+`;
+
+      const iframe = getIFrame();
+      iframe.srcdoc = html;
+      iframe.onload = () => {
+        try {
+          const fn = (iframe.contentWindow as any)[funcName];
+          const retVal = fn(context, params);
+          resolve(retVal);
+        } catch (error) {
+          reject(error);
+        } finally {
+          releaseIFrame(iframe);
+        }
+      };
+    });
 }
 
 export const Bootstrap = Object.freeze({

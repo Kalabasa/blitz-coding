@@ -29,18 +29,18 @@
 
 .inputSection {
   grid-area: input;
-  padding: 12px 6px 12px 12px;
+  padding: 12px 6px 6px 12px;
 }
 
 .expectationSection {
   grid-area: expectation;
-  padding: 12px 12px 12px 6px;
+  padding: 12px 12px 6px 6px;
 }
 
 .resultSection {
   position: relative;
   grid-area: result;
-  padding: 12px;
+  padding: 6px 12px 12px;
   animation: resultEntrance 0.1s calc(0.2s + 0.03s * var(--caseIndex, 0)) linear
     backwards;
 }

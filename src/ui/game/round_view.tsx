@@ -15,38 +15,43 @@ import {
   AlertMessage,
   AlertMessageProps,
 } from "ui/alert_message/alert_message";
-import { Light } from "ui/light/light";
 import { Editor } from "ui/editor/editor";
+import { Light } from "ui/light/light";
 import { PuzzleCard } from "ui/puzzle_card/puzzle_card";
 import { Color } from "ui/styles/colors";
 import { Timer } from "ui/timer/timer";
 import styles from "./round_view.module.css";
-import { act } from "react-dom/test-utils";
 
 enum RoundStep {
-  Intro,
+  Intro1,
+  Intro2,
   Play,
   Flip,
   Outcome,
+  Collect,
 }
 
 export const RoundView = ({
   game,
   round: roundIndex,
   currentRound,
-  nextRound,
+  collect,
+  onRoundEnd,
+  onQuit,
 }: {
   game: Game;
   round: number;
   currentRound: number;
-  nextRound: () => void;
+  collect?: boolean;
+  onRoundEnd: (outcome: "success" | "failure") => void;
+  onQuit: () => void;
 }): JSX.Element => {
   const [result, setResult] = useState(undefined as RoundResult | undefined);
   const [code, setCode] = useState("return ");
   const [executing, setExecuting] = useState(false);
   const [timerStart, setTimerStart] = useState<number>();
   const [timerEnd, setTimerEnd] = useState<number>();
-  const [roundStep, setRoundStep] = useState<RoundStep>(RoundStep.Intro);
+  const [roundStep, setRoundStep] = useState<RoundStep>(RoundStep.Intro1);
   const timeoutHandle = useRef<any>();
   const logsRef = useRef<string[]>([]);
 
@@ -63,36 +68,42 @@ export const RoundView = ({
   const onResult = useCallback(
     (res: RoundResult, end: boolean) => {
       setResult(res);
-      console.debug(res);
       if (end) {
-        setRoundStep(RoundStep.Flip);
-        timeout(1500, () => {
-          setRoundStep(RoundStep.Outcome);
-          timeout(100, nextRound);
+        timeout(1000, () => {
+          setRoundStep(RoundStep.Flip);
+          timeout(600, () => {
+            setRoundStep(RoundStep.Outcome);
+            timeout(100, () => onRoundEnd(res.success ? "success" : "failure"));
+          });
         });
       }
     },
-    [nextRound]
+    [onRoundEnd]
   );
 
   const onRun = useCallback(
     (res: RoundResult, end: boolean) => {
-      setExecuting(true);
       onResult(res, end);
-      setTimeout(() => setExecuting(false), 500);
+      setExecuting(false);
     },
-    [nextRound]
+    [onRoundEnd]
   );
 
-  const submit = useCallback(
-    (final: boolean) => {
+  // This callback is a ref so that async callbacks will submit the latest code.
+  // Regularly-defined callback or useCallback'd callbacks messes up b/c of closures.
+  const submitRef = useRef<(final: boolean) => void>();
+  useEffect(() => {
+    submitRef.current = (final: boolean) => {
+      if (roundStep !== RoundStep.Play) return;
+
+      setExecuting(true);
+
       enqueueRunCode.clear();
       runCode(code, round, logsRef.current, (res) =>
         onRun(res, res.success || final)
       );
-    },
-    [code, round, logsRef.current, onRun]
-  );
+    };
+  }, [code, round, roundStep, logsRef.current, onRun]);
 
   const setAndRunCode = useCallback(
     (cd: string) => {
@@ -104,22 +115,39 @@ export const RoundView = ({
     [round, logsRef.current, onRun]
   );
 
+  const quit = useCallback(() => {
+    setRoundStep(RoundStep.Flip);
+    onQuit();
+  }, [onQuit]);
+
+  const skip = useCallback(() => {
+    setResult({ success: false });
+    setRoundStep(RoundStep.Outcome);
+    timeout(100, () => onRoundEnd("failure"));
+  }, [onRoundEnd]);
+
+  // lifecycle
   useEffect(() => {
-    clearTimeout(timeoutHandle.current);
-    if (active) {
-      const start = Date.now() + 1000;
+    if (active && roundStep === RoundStep.Play) {
+      const start = Date.now() + 500;
       const end = start + round.time * 1000 + 999;
+
       setTimerStart(start);
       setTimerEnd(end);
+
+      clearTimeout(timeoutHandle.current);
       timeoutHandle.current = setTimeout(() => {
-        submit(true);
+        submitRef.current?.(true);
       }, end - Date.now());
+    } else if (collect) {
+      setRoundStep(RoundStep.Collect);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, onResult]);
+  }, [active, roundStep, collect, onResult]);
 
   useEffect(() => {
-    setTimeout(() => setRoundStep(RoundStep.Play), 1000);
+    setTimeout(() => setRoundStep(RoundStep.Intro2));
+    setTimeout(() => setRoundStep(RoundStep.Play), 1750);
   }, []);
 
   const graphics = useMemo(
@@ -145,7 +173,8 @@ export const RoundView = ({
   const alertMessages = [...logAlerts, ...errorAlerts];
 
   const modCode = formatMods(round.mods);
-  const introMode = roundStep === RoundStep.Intro;
+  const introMode = roundStep <= RoundStep.Intro2;
+  const collectMode = roundStep === RoundStep.Collect;
   const isPlaying = active && roundStep === RoundStep.Play;
 
   return (
@@ -153,6 +182,7 @@ export const RoundView = ({
       className={classNames({
         [styles.container]: true,
         [styles.introMode]: introMode,
+        [styles.collectMode]: collectMode,
       })}
     >
       <div
@@ -185,10 +215,10 @@ export const RoundView = ({
           codeSuffix="}"
           outcome={roundStep === RoundStep.Outcome ? outcome : undefined}
           focus={isPlaying}
-          darken={!active && !introMode}
+          darken={!active && roundStep !== RoundStep.Intro1 && !collectMode}
           executing={executing}
           submitDisabled={executing || !isPlaying}
-          onSubmit={() => submit(false)}
+          onSubmit={() => submitRef.current?.(false)}
         />
       </div>
 
@@ -196,6 +226,26 @@ export const RoundView = ({
         <Timer startTime={timerStart} endTime={isPlaying ? timerEnd : 0} />
       </div>
 
+      <div
+        className={classNames({
+          [styles.gameInfoContainer]: true,
+          [styles.gameInfoContainerHidden]: !isPlaying,
+        })}
+      >
+        <button onClick={quit} className={styles.gameButton}>
+          Quit
+        </button>
+        <h2 className={styles.roundCount}>
+          Round {roundIndex + 1}/{game.rounds.length}
+        </h2>
+        <button onClick={skip} className={styles.gameButton}>
+          Skip
+        </button>
+      </div>
+
+      {roundStep === RoundStep.Intro2 && currentRound === roundIndex && (
+        <Light color={Color.accent} />
+      )}
       {roundStep >= RoundStep.Outcome && currentRound <= roundIndex + 1 && (
         <Light color={outcome === "success" ? Color.success : Color.failure} />
       )}
@@ -218,9 +268,7 @@ function runCode(
     outLogs.push(data?.map((d) => d?.toString()).join(" "));
   };
 
-  const result = Game.runRound(code, round, logger);
-
-  onRun(result);
+  Game.runRound(code, round, logger).then(onRun);
 }
 
 function formatMods(mods?: Mod[]) {

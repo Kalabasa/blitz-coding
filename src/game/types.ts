@@ -12,7 +12,6 @@ export enum Difficulty {
 }
 
 export type Round = {
-  points: number;
   time: number;
   suite: Suite;
   mods?: Mod[];

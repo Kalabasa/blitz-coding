@@ -5,11 +5,13 @@ import styles from "./game.module.css";
 
 export type GameProps = {
   game: Game;
-  onGameEnd?: () => void;
+  onGameEnd?: (score: number) => void;
 };
 
 export const GameView = memo(({ game, onGameEnd }: GameProps) => {
   const [currentRound, setCurrentRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [collecting, setCollecting] = useState(false);
 
   const startRound = useCallback((index: number) => {
     setCurrentRound(index);
@@ -18,11 +20,29 @@ export const GameView = memo(({ game, onGameEnd }: GameProps) => {
   // Initialization
   useEffect(() => {
     startRound(0);
-  }, [startRound]);
+  }, []);
 
-  const onRoundComplete = useCallback(() => {
-    startRound(currentRound + 1);
-  }, [startRound, currentRound]);
+  const onRoundEnd = useCallback(
+    (outcome: "success" | "failure") => {
+      let newScore = score;
+      if (outcome === "success") newScore++;
+      setScore(newScore);
+
+      if (currentRound + 1 < game.rounds.length) {
+        startRound(currentRound + 1);
+      } else {
+        setTimeout(() => setCollecting(true), 1000);
+        setTimeout(() => onGameEnd?.(newScore), 2600);
+      }
+    },
+    [score, currentRound]
+  );
+
+  const onQuit = useCallback(() => {
+    setScore(0);
+    setCollecting(true);
+    setTimeout(() => onGameEnd?.(0), 2000);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -33,7 +53,9 @@ export const GameView = memo(({ game, onGameEnd }: GameProps) => {
             game,
             round: index,
             currentRound,
-            nextRound: onRoundComplete,
+            collect: collecting,
+            onRoundEnd,
+            onQuit,
           }}
         />
       ))}

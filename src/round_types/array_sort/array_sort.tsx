@@ -1,15 +1,13 @@
-import { Box } from "code/box";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
 import { modBanMethod } from "mods/ban_method/ban_method";
 import {
+  randomInt,
   range,
   rangeCases,
-  RoundTypeUtil,
   sample,
-  shuffle,
+  shuffle
 } from "round_types/utils";
-import seedrandom from "seedrandom";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
 const sortArray = (
@@ -17,7 +15,6 @@ const sortArray = (
   noNativeSort: boolean,
   stringSort: boolean
 ): Round => ({
-  points: 1,
   time: 30 + (noNativeSort ? 90 : 0),
   suite: {
     funcName: "sort",
@@ -27,15 +24,15 @@ const sortArray = (
         ? i < 5
           ? shuffle([
               ...sample(2, range(5, 9)),
-              Math.floor(10 + Math.random() * 40),
+              randomInt(10, 40),
               ...sample(2, range(1, 100)),
             ])
           : sample(5, range(1, 100))
         : sample(5, [
-            ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-            "AA",
-            "AB",
-            "BB",
+            ..."abcdefghijklmnopqrstuvwxyz".split(""),
+            "aa",
+            "ab",
+            "bb",
           ]);
 
       const compare = stringSort
@@ -43,10 +40,10 @@ const sortArray = (
         : (a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0);
 
       return {
-        inputs: [Box.arrayValues(array)],
-        output: Box.arrayValues([...array].sort(compare)),
+        inputs: [array],
+        output: [...array].sort(compare),
       };
-    }).map(RoundTypeUtil.boxCase),
+    }),
   },
   mods: noNativeSort ? [modBanMethod("Array", "sort")] : [],
   Graphics: /*TODO arraymanipulationgraphics*/ createPlainCaseGridGraphics(3),
@@ -55,19 +52,14 @@ const sortArray = (
 export const createSortArray: RoundGenerator = {
   minDifficulty: Difficulty.Medium,
   weight: 1,
-  create: (difficulty: Difficulty, seed: string) => {
-    const random = seedrandom(seed);
-
-    return {
-      fn: sortArray,
-      params: [
-        random() < 0.5 ||
-          (difficulty >= Difficulty.Medium &&
-            difficulty < Difficulty.Impossible),
-        (difficulty >= Difficulty.Medium && random() < 0.25) ||
-          difficulty >= Difficulty.Hard,
-        difficulty >= Difficulty.Impossible,
-      ],
-    };
-  },
+  create: (difficulty: Difficulty) => ({
+    fn: sortArray,
+    params: [
+      Math.random() < 0.5 ||
+        (difficulty >= Difficulty.Medium && difficulty < Difficulty.Impossible),
+      (difficulty >= Difficulty.Medium && Math.random() < 0.25) ||
+        difficulty >= Difficulty.Hard,
+      difficulty >= Difficulty.Impossible,
+    ],
+  }),
 };

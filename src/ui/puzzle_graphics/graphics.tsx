@@ -47,6 +47,27 @@ export function formatValue(value: unknown): ReactNode {
         </>
       );
     case "number":
+      let num = value * 100;
+
+      const floatError = Math.abs(num - Math.round(num)) < 1e-12;
+      if (floatError) {
+        num = Math.round(100 * num) / 100;
+      }
+
+      const sign = Math.sign(num);
+      const decimal = Math.floor(Math.abs(num)).toString().padStart(3, "0");
+      const integral = decimal.slice(0, -2);
+      const fractional = decimal.slice(-2).replace(/0+$/, "");
+      const truncated =
+        Math.abs(Math.floor(Math.abs(num)) - Math.abs(num)) > 1e-6;
+      return (
+        <>
+          {sign < 0 ? "-" : ""}
+          {integral ?? "0"}
+          {fractional ? "." + fractional : ""}
+          {truncated ? <Sym>…</Sym> : ""}
+        </>
+      );
     case "boolean":
       return "" + value;
     case "function":
@@ -113,10 +134,10 @@ export const createPlainCaseGridGraphics = (
             funcName={suite.funcName}
             inputs={suite.inputNames.map((name, j) => [
               name,
-              example.inputs[j].valueOf(),
+              example.inputs[j],
             ])}
-            expected={example.output.valueOf()}
-            result={run?.output?.valueOf()}
+            expected={example.output}
+            result={run?.output}
             outcome={RoundTypeUtil.runOutcome(run)}
           />
         </GraphicsBorder>

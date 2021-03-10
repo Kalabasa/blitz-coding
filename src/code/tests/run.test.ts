@@ -1,12 +1,9 @@
-import { Box } from "code/box";
 import { Run } from "code/run";
 
-it("runs code", () => {
-  const runs = Run.code("return a + b;", {
-    funcName: "sum",
-    inputNames: ["a", "b"],
-    cases: [{ inputs: Box.arrayValues([2, 3]), output: Box.value(undefined) }],
-  }) as Run[];
+it("runs code", async () => {
+  const runs = await Run.cases((a, b) => Promise.resolve(a + b), [
+    { inputs: [2, 3], output: undefined },
+  ]);
 
   expect(runs).toHaveLength(1);
   expect(runs[0]).toHaveProperty("output");

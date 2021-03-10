@@ -1,8 +1,14 @@
 import { Case } from "code/case";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { pick, range, rangeCases, sample, shuffle } from "round_types/utils";
-import seedrandom from "seedrandom";
+import {
+  pick,
+  randomInt,
+  range,
+  rangeCases,
+  sample,
+  shuffle
+} from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
 /*
@@ -22,10 +28,9 @@ const arrayEquals = ({
   ignoreOrder,
   mixedTypes,
 }: RoundTypeParameters): Round => ({
-  points: 3,
   time: 60,
   suite: {
-    funcName: ignoreOrder ? "setEq" : "arrEq",
+    funcName: ignoreOrder ? "equalSets" : "equalArrays",
     inputNames: ["a", "b"],
     cases: rangeCases(0, 40, (i) => {
       const mixedTypesNow = mixedTypes === "regular" && i < 35;
@@ -68,13 +73,11 @@ const arrayEquals = ({
 export const createArrayEquals: RoundGenerator = {
   minDifficulty: Difficulty.Easy,
   weight: 1,
-  create: (difficulty: Difficulty, seed: string) => {
-    const random = seedrandom(seed);
-
+  create: (difficulty: Difficulty) => {
     const params: RoundTypeParameters = {
       unique: difficulty <= Difficulty.Medium,
       varyLength: difficulty >= Difficulty.Medium,
-      ignoreOrder: difficulty >= Difficulty.Medium && random() < 0.5,
+      ignoreOrder: difficulty >= Difficulty.Medium && Math.random() < 0.5,
       mixedTypes:
         difficulty <= Difficulty.Medium
           ? "none"
@@ -108,10 +111,11 @@ const mixedPool = () => [
 const specialPool = () => [
   0,
   1,
-  pick(numberPool().map(String), Math.random),
-  pick(letterPool().map(String), Math.random),
+  pick(numberPool().map(String)),
+  pick(letterPool().map(String)),
   undefined,
   null,
+  NaN,
   Infinity,
   -Infinity,
   true,
@@ -196,7 +200,7 @@ function caseForLooselyUnequal(options: {
 // Generates a new array whose elements are loosely equal
 // or equal after serialization to corresponding original elements
 function mixupTypes(array: any[]): any[] {
-  const target = Math.floor(Math.random() * array.length);
+  const target = randomInt(0, array.length - 1);
   return array.map((value: any, i) => {
     if (i !== target) return value;
 

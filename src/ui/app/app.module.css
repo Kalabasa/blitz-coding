@@ -1,8 +1,12 @@
 @value backgroundColor from "~ui/styles/colors.module.css";
 @value textColor from "~ui/styles/colors.module.css";
+@value darkTextColor from "~ui/styles/colors.module.css";
 @value secondaryTextColor from "~ui/styles/colors.module.css";
 @value accentColor from "~ui/styles/colors.module.css";
 @value noiseURL from "~ui/styles/noise.module.css";
+
+@value cardWidth from "~ui/puzzle_card/puzzle_card.module.css";
+@value cardHeight from "~ui/puzzle_card/puzzle_card.module.css";
 
 .app {
   width: 100%;
@@ -31,24 +35,38 @@
 
 .menu {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
+  padding-bottom: 112px;
+  box-sizing: border-box;
   z-index: 1;
-  overflow: auto;
+}
+
+.menuHeading {
+  font-size: 24px;
+  font-weight: lighter;
+  transition: opacity 0.4s 0.4s linear;
+}
+.menuHeadingHidden {
+  opacity: 0;
+  transition: opacity 0.2s linear;
 }
 
 .deckList {
   padding: 12px 96px;
-  display: flex;
-  flex-wrap: nowrap;
-  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 auto;
 }
 
 .deckItem {
+  flex: 0 0 auto;
   transition: opacity 0.4s 0.4s linear;
 }
 
@@ -82,4 +100,56 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+}
+
+.scoreScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scoreText {
+  font-size: 24px;
+  z-index: 1;
+  text-align: center;
+  animation: fadeIn 0.1s 0.2s linear both;
+}
+
+.scoreCard {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: cardWidth;
+  height: cardHeight;
+  transform: translate(-50%, -50%) scale(1.003);
+}
+
+.backToMenu {
+  cursor: pointer;
+  background: accentColor;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font: inherit;
+  color: darkTextColor;
+  font-weight: bold;
+  margin-top: 144px;
+  z-index: 2;
+  animation: fadeIn 0.2s 1s linear both;
+  outline: none;
+}
+.backToMenu:focus-visible {
+  box-shadow: 0 0 0 12px darkTextColor;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
 }

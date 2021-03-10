@@ -27,6 +27,46 @@
   height: 108px;
 }
 
+.gameInfoContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 600px;
+  height: 60px;
+  transition: opacity 0.1s 0.6s linear;
+}
+.gameInfoContainerHidden {
+  opacity: 0;
+  transition: opacity 0.1s linear;
+}
+.gameButton {
+  flex: 1 1 15%;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  opacity: 0.2;
+  transition: opacity 0.1s linear;
+}
+.gameButton:hover {
+  opacity: 1;
+}
+.gameButton:focus {
+  color: accentColor;
+  opacity: 1;
+}
+.gameInfoContainer:not(.gameInfoContainerHidden) .gameButton {
+  pointer-events: all;
+}
+.roundCount {
+  flex: 1 1 70%;
+  font-size: 18px;
+  font-weight: normal;
+  text-align: center;
+}
+
 .farPrevCard {
   transform: translate3d(-1920px, 0, -672px) rotateY(-90deg) rotateX(-0.2deg);
   transition-delay: 0s;
@@ -53,7 +93,6 @@
 .currentCard.flipped {
   transform: translate3d(0, 0, 0) rotateY(-180deg);
   transition-duration: 0.7s;
-  transition-delay: 1s;
   transition-timing-function: back;
 }
 
@@ -75,24 +114,28 @@
   z-index: 4;
 }
 
-.introMode .timerContainer {
-  animation: timerIntro 0.6s introEase both;
+.introMode .timerContainer,
+.introMode .gameInfoContainer {
+  animation: infoBarIntro 1s introEase both;
 }
-@keyframes timerIntro {
+@keyframes infoBarIntro {
   from {
     height: 0;
   }
 }
 .introMode .currentCard {
-  animation: currentCardIntro 1s 0.12s introEase both;
+  animation: currentCardIntro 1.5s 0.24s introEase both;
 }
 @keyframes currentCardIntro {
   from {
     transform: translate3d(0, -18px, 0) rotateY(180deg);
   }
+  50% {
+    transform: translate3d(0, 0, 0) rotateY(180deg);
+  }
 }
 .introMode .nextCard {
-  animation: nextCardIntro 1s 0.08s introEase both;
+  animation: nextCardIntro 1s 0.12s introEase both;
 }
 @keyframes nextCardIntro {
   from {
@@ -100,7 +143,7 @@
   }
 }
 .introMode .nextNextCard {
-  animation: nextNextCardIntro 1s 0.04s introEase both;
+  animation: nextNextCardIntro 1s 0.06s introEase both;
 }
 @keyframes nextNextCardIntro {
   from {
@@ -113,5 +156,66 @@
 @keyframes farNextCardIntro {
   from {
     transform: translate3d(0, 0, 0) rotateY(180deg);
+  }
+}
+
+.collectMode .timerContainer,
+.collectMode .gameInfoContainer {
+  animation: infoBarCollect 0.56s 0s introEase both;
+}
+@keyframes infoBarCollect {
+  to {
+    height: 0;
+  }
+}
+.collectMode .currentCard {
+  animation: currentCardCollect 1.4s 0s introEase both;
+}
+@keyframes currentCardCollect {
+  50%,
+  80% {
+    transform: translate3d(0, -60px, 0) rotateY(-180deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotateY(-180deg);
+  }
+}
+.collectMode .prevCard,
+.collectMode .nextCard {
+  animation: prevCardCollect 1.4s 0.06s introEase both;
+}
+@keyframes prevCardCollect {
+  50%,
+  80% {
+    transform: translate3d(0, -48px, 0) rotateY(-180deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotateY(-180deg);
+  }
+}
+.collectMode .prevPrevCard,
+.collectMode .nextNextCard {
+  animation: prevPrevCardCollect 1.4s 0.12s introEase both;
+}
+@keyframes prevPrevCardCollect {
+  50%,
+  80% {
+    transform: translate3d(0, -36px, 0) rotateY(-180deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotateY(-180deg);
+  }
+}
+.collectMode .farPrevCard,
+.collectMode .farNextCard {
+  animation: farPrevCardCollect 1.4s 0.18s introEase both;
+}
+@keyframes farPrevCardCollect {
+  50%,
+  80% {
+    transform: translate3d(0, -24px, 0) rotateY(-180deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotateY(-180deg);
   }
 }
