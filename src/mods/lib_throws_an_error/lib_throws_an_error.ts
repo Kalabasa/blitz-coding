@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 let id: string;
 
 const throwAnError = function () {
@@ -53,6 +54,7 @@ const throwAnError = function () {
 
   throw error;
 };
+/* eslint-enable */
 
 export const libThrowsAnError = `
 var throwsAnError = function(){

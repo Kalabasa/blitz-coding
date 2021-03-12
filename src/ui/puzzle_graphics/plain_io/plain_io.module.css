@@ -58,12 +58,12 @@
 
 .inputName {
   composes: key;
-  flex: 1 1 25%;
+  flex: 0 1 30%;
 }
 
 .inputValue {
   composes: value;
-  flex: 1 1 75%;
+  flex: 1 1 30%;
   white-space: pre-wrap;
 }
 

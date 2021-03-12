@@ -12,7 +12,7 @@ export function range(min: number, max: number): number[] {
 export function rangeCases(
   min: number,
   max: number,
-  makeCase: (n: number) => { inputs: unknown[]; output: unknown }
+  makeCase: (n: number) => Case
 ): Case[] {
   return Array.from({ length: max - min + 1 }, (_, i) => min + i).map(makeCase);
 }
@@ -90,12 +90,12 @@ export function shuffle(array: any[], random: Random = Math.random) {
   return array;
 }
 
-export function sample(
+export function sample<T>(
   count: number,
-  pool: any[],
+  pool: T[],
   unique: boolean = true,
   random: Random = Math.random
-) {
+): T[] {
   if (unique) pool = [...pool];
   count = Math.min(count, pool.length);
   const a = [];

@@ -26,7 +26,7 @@ export const PlainIO = ({
         <div key={name} className={styles.inputLine}>
           <span className={styles.inputName}>{name}:</span>
           <span className={styles.inputValue}>
-            {formatValue(value, { maxFunctionLength: 30 })}
+            {formatValue(value, { maxFuncStrLen: 30 })}
           </span>
         </div>
       ))}
@@ -46,7 +46,7 @@ export const PlainIO = ({
           {inputs.map(([, value], i) => (
             <Fragment key={i}>
               {i > 0 && <>,</>}
-              {formatValue(value, { ignoreFormatString: true })}
+              {formatValue(value, { style: "shortest" })}
             </Fragment>
           ))}
           )&nbsp;=&nbsp;

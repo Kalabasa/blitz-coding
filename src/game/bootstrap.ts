@@ -14,11 +14,13 @@ function createFunction(
   const inputVars = inputNames.map((name) => "_" + prefix + name);
   const contextVar = prefix + "context";
 
+  const thisValue = "{valueOf:function(){return undefined}}";
+
   const code = `
 try{
 
-function ${funcName}(${inputNames.join(",")}){
 with(${contextVar}){
+function ${funcName}(${inputNames.join(",")}){
 
 /* ------ PLAYER CODE START ------ */
 ${funcCode}
@@ -35,7 +37,7 @@ ${modCode}
 ${setupCode}
 /* ------ SETUP END ------ */
 
-return ${funcName}.call({},${inputVars.join(",")});
+return ${funcName}.call(${thisValue},${inputVars.join(",")});
 
 }finally{
 /* ------ MOD CLEANUP START ------ */
@@ -92,7 +94,7 @@ function getContext(log: (...data: any[]) => void) {
   const context: any = {};
 
   for (let name in globalThis) {
-    context[name] = null;
+    context[name] = undefined;
   }
 
   context.console = { log };

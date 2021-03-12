@@ -1,12 +1,11 @@
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { modBanMethod } from "mods/ban_method/ban_method";
-import { pick, randomInt, range, rangeCases, sample } from "round_types/utils";
+import { pick, randomInt, range } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
 const bars = "▁▂▃▄▅▆▇█";
 
-const sparkline = (quantization: number): Round => ({
+const sparkline = (quantization: number, provideBars: boolean): Round => ({
   time: 200 + Math.floor(Math.log10(quantization)) * 10,
   suite: {
     funcName: "sparklineChart",
@@ -23,7 +22,7 @@ const sparkline = (quantization: number): Round => ({
         output: generateSparkline(data),
       })),
   },
-  mods: [{ code: "var bars = '" + bars + "'" }],
+  mods: provideBars ? [{ code: "var bars = '" + bars + "'" }] : [],
   Graphics: createPlainCaseGridGraphics(3, 1),
 });
 
@@ -38,6 +37,8 @@ export const createSparkline: RoundGenerator = {
         : difficulty <= Difficulty.Hard
         ? 5
         : 100,
+      difficulty <= Difficulty.Easy ||
+        (difficulty <= Difficulty.Medium && Math.random() < 0.8),
     ],
   }),
 };

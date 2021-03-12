@@ -1,6 +1,6 @@
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { randomInt, range, rangeCases, sample } from "round_types/utils";
+import { rangeCases } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
 const convert24HourTo12 = (): Round => ({
@@ -22,6 +22,7 @@ const convert24HourTo12 = (): Round => ({
 
 export const create24To12: RoundGenerator = {
   minDifficulty: Difficulty.Easy,
+  maxDifficulty: Difficulty.Medium,
   weight: 1,
   create: (difficulty: Difficulty) => ({
     fn: convert24HourTo12,

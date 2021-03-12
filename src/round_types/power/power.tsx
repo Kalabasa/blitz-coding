@@ -43,8 +43,7 @@ export const createPower: RoundGenerator = {
   create: (difficulty: Difficulty) => ({
     fn: power,
     params: [
-      (difficulty >= Difficulty.Medium && Math.random() < 0.1) ||
-        difficulty >= Difficulty.Hard,
+      difficulty >= Difficulty.Hard,
       difficulty >= Difficulty.Impossible,
       (difficulty >= Difficulty.Medium && Math.random() < 0.8) ||
         difficulty >= Difficulty.Hard,

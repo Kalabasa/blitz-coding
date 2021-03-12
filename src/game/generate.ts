@@ -9,6 +9,7 @@ import { createCountMultiOccurences } from "round_types/count_multiple_occurence
 import { createCountOccurences } from "round_types/count_occurences/count_occurences";
 import { createFactorial } from "round_types/factorial/factorial";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
+import { createHangman } from "round_types/hangman/hangman";
 import { createHigherLower } from "round_types/higher_lower/higher_lower";
 import { createIsEven } from "round_types/is_even/is_even";
 import { createIsPalindrome } from "round_types/is_palindrome/is_palindrome";
@@ -16,34 +17,39 @@ import { createListToArray } from "round_types/list_to_array/list_to_array";
 import { createMathExpression } from "round_types/math_expression/math_expression";
 import { createPower } from "round_types/power/power";
 import { createQuadSequence } from "round_types/quad_sequence/quad_sequence";
+import { createRange } from "round_types/range/range";
 import { createRockPaperScissors } from "round_types/rock_paper_scissors/rock_paper_scissors";
 import { createSparkline } from "round_types/sparkline/sparkline";
 import { createSqrt } from "round_types/sqrt/sqrt";
 import { createReverseString } from "round_types/string_reverse/string_reverse";
 import { createTicTacToe } from "round_types/tic_tac_toe/tic_tac_toe";
+import { createZip } from "round_types/zip/zip";
 
 const allRoundGens: RoundGenerator[] = [
-  // createIsEven,
-  // createQuadSequence,
-  // createFibonacciSequence,
-  // createArrayEquals,
-  // createReverseString,
-  // createSortArray,
-  // createCountOccurences,
-  // createCountMultiOccurences,
-  // createArithmetic,
-  // createPower,
-  // createHigherLower,
-  // createMathExpression,
-  // createFactorial,
-  // createTicTacToe,
-  // createListToArray,
-  // create24To12,
-  // createRockPaperScissors,
-  // createIsPalindrome,
-  // createAbbreviate,
-  // createSqrt,
+  create24To12,
+  createAbbreviate,
+  createArithmetic,
+  createArrayEquals,
+  createCountMultiOccurences,
+  createCountOccurences,
+  createFactorial,
+  createFibonacciSequence,
+  createHangman,
+  createHigherLower,
+  createIsEven,
+  createIsPalindrome,
+  createListToArray,
+  createMathExpression,
+  createPower,
+  createQuadSequence,
+  createRange,
+  createReverseString,
+  createRockPaperScissors,
+  createSortArray,
   createSparkline,
+  createSqrt,
+  createTicTacToe,
+  createZip,
 ];
 
 export type RoundType<P extends unknown[] = any[]> = {

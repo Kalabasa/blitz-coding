@@ -29,7 +29,7 @@ const gameDecks: GameDeck[] = [
     name: "Easy Marathon",
     description: "Trivial one-liners and basic algorithms.",
     difficulty: Difficulty.Easy,
-    rounds: 20,
+    rounds: 15,
   },
   {
     name: "Medium",
@@ -41,7 +41,7 @@ const gameDecks: GameDeck[] = [
     name: "Medium Marathon",
     description: "Simple puzzles with quirks and intermediate algorithms.",
     difficulty: Difficulty.Medium,
-    rounds: 20,
+    rounds: 15,
   },
   {
     name: "Hard",

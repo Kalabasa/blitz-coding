@@ -6,7 +6,7 @@ import {
   range,
   rangeCases,
   sample,
-  shuffle
+  shuffle,
 } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
@@ -55,11 +55,11 @@ export const createSortArray: RoundGenerator = {
   create: (difficulty: Difficulty) => ({
     fn: sortArray,
     params: [
-      Math.random() < 0.5 ||
-        (difficulty >= Difficulty.Medium && difficulty < Difficulty.Impossible),
+      Math.random() < 0.5 || difficulty >= Difficulty.Impossible,
       (difficulty >= Difficulty.Medium && Math.random() < 0.25) ||
         difficulty >= Difficulty.Hard,
-      difficulty >= Difficulty.Impossible,
+      (difficulty >= Difficulty.Hard && Math.random() < 0.2) ||
+        difficulty >= Difficulty.Impossible,
     ],
   }),
 };

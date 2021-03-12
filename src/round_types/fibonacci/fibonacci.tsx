@@ -29,7 +29,7 @@ export const createFibonacciSequence: RoundGenerator = {
   weight: 1,
   create: (difficulty: Difficulty) => ({
     fn: fibonacciSequence,
-    params: [difficulty > Difficulty.Easy && Math.random() < 0.5],
+    params: [difficulty >= Difficulty.Medium && Math.random() < 0.5],
   }),
 };
 

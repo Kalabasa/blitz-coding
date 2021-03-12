@@ -21,7 +21,7 @@ const higherLower = (
   return {
     time: 200 + (withNonIntegers ? 100 : 0),
     suite: {
-      funcName: "guess",
+      funcName: "playGuessTheNumber",
       inputNames: ["higher", "lower"],
       cases: rangeCases(0, 20, (i) => {
         let n = randomInt(low, high);
@@ -67,7 +67,7 @@ export const createHigherLower: RoundGenerator = {
   create: (difficulty: Difficulty) => ({
     fn: higherLower,
     params: [
-      difficulty >= Difficulty.Hard,
+      Math.random() < 0.2 || difficulty >= Difficulty.Hard,
       difficulty >= Difficulty.Impossible,
     ],
   }),

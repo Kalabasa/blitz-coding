@@ -17,9 +17,11 @@ export type GraphicsProps = {
   runs?: Run[];
 };
 
+type FormatStyle = undefined | "native" | "shortest";
+
 export type FormatOptions = {
-  ignoreFormatString?: boolean;
-  maxFunctionLength?: number;
+  style?: FormatStyle;
+  maxFuncStrLen?: number;
 };
 
 export const toFormatString = Symbol("toFormatString");
@@ -28,13 +30,32 @@ export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
   if (value === undefined) return "undefined";
   if (value === null) return "null";
 
-  if (!opts?.ignoreFormatString && (value as any)[toFormatString]) {
+  const { style, maxFuncStrLen } = opts ?? {};
+
+  if (style === undefined && (value as any)[toFormatString]) {
     return (value as any)[toFormatString]();
+  }
+
+  if (style === "native") {
+    return "" + value;
   }
 
   value = (value as any).valueOf();
 
+  if (value === undefined) return "undefined";
+  if (value === null) return "null";
+
   if (value instanceof Array || Array.isArray(value)) {
+    if (style === "shortest") {
+      const json = JSON.stringify(value);
+      const alt = shortest([
+        (value as any)[toFormatString]?.(),
+        value.toString(),
+        "array",
+      ]);
+      if (alt.length < json.length) return alt;
+    }
+
     return (
       <>
         <Sym>[</Sym>
@@ -58,6 +79,7 @@ export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
           <Sym>’</Sym>
         </>
       );
+
     case "number":
       if (
         Number.isNaN(value) ||
@@ -91,16 +113,35 @@ export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
           {truncate ? <Sym>…</Sym> : ""}
         </>
       );
+
     case "boolean":
       return "" + value;
+
     case "function":
       const funcStr = value.toString();
-      return funcStr && funcStr.length <= (opts?.maxFunctionLength ?? 12)
+
+      if (style === "shortest") {
+        return shortest([funcStr, value.name, "function"]);
+      }
+
+      return funcStr && funcStr.length <= (maxFuncStrLen ?? 12)
         ? funcStr
-        : value.name ?? "Function";
+        : value.name ?? "function";
+
     case "object":
       if (value === null) return "null";
       if (value instanceof Date) return value.toISOString();
+
+      if (style === "shortest") {
+        const json = JSON.stringify(value);
+        const alt = shortest([
+          (value as any)[toFormatString]?.(),
+          value.toString(),
+          "object",
+        ]);
+        if (alt.length < json.length) return alt;
+      }
+
       return (
         <>
           <Sym>{"{"}</Sym>
@@ -121,6 +162,15 @@ export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
   }
 
   throw new Error("Unsupported value: " + value);
+}
+
+function shortest(arr: string[]): string {
+  arr = arr.filter((s) => s);
+  let min = arr[0];
+  for (let s of arr.slice(1)) {
+    if (s.length < min.length) min = s;
+  }
+  return min;
 }
 
 function formatKey(k: string) {

@@ -56,9 +56,10 @@ export const createAbbreviate: RoundGenerator = {
       (difficulty >= Difficulty.Easy && Math.random() < 0.05) ||
         (difficulty >= Difficulty.Medium && Math.random() < 0.1) ||
         difficulty >= Difficulty.Hard,
+      (difficulty >= Difficulty.Medium && Math.random() < 0.1) ||
+        (difficulty >= Difficulty.Hard && Math.random() < 0.2) ||
+        difficulty >= Difficulty.Impossible,
       difficulty >= Difficulty.Hard,
-      (difficulty >= Difficulty.Medium && Math.random() < 0.6) ||
-        (difficulty >= Difficulty.Hard && Math.random() < 0.1),
     ],
   }),
 };

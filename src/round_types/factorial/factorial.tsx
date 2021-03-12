@@ -29,7 +29,10 @@ export const createFactorial: RoundGenerator = {
   weight: 1,
   create: (difficulty: Difficulty) => ({
     fn: factorial,
-    params: [difficulty >= Difficulty.Hard && Math.random() < 0.5],
+    params: [
+      (difficulty >= Difficulty.Hard && Math.random() < 0.5) ||
+        difficulty >= Difficulty.Impossible,
+    ],
   }),
 };
 

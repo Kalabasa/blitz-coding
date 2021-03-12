@@ -42,8 +42,7 @@ export const createSqrt: RoundGenerator = {
   create: (difficulty: Difficulty) => ({
     fn: sqrt,
     params: [
-      (difficulty >= Difficulty.Medium && Math.random() < 0.5) ||
-        difficulty >= Difficulty.Hard,
+      difficulty >= Difficulty.Medium,
       difficulty >= Difficulty.Hard,
       Math.random() < 0.95 || difficulty >= Difficulty.Medium,
       Math.random() < 0.8 || difficulty >= Difficulty.Hard,
