@@ -151,6 +151,30 @@
   animation: waitAnimation 1s linear infinite;
 }
 
+.executePopup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 12px;
+  border-radius: 12px;
+  transform: translate(-50%, -50%);
+  background: codeEditorColor;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.executePopupExecuting {
+  opacity: 1;
+}
+
+.executingIcon {
+  display: inline-block;
+  margin-left: 12px;
+  filter: textFilter;
+  animation: waitAnimation 1s linear infinite;
+}
+
 @keyframes waitAnimation {
   to {
     transform: rotate(360deg);

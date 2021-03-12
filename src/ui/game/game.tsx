@@ -20,6 +20,7 @@ export const GameView = memo(({ game, onGameEnd }: GameProps) => {
   // Initialization
   useEffect(() => {
     startRound(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onRoundEnd = useCallback(
@@ -35,14 +36,14 @@ export const GameView = memo(({ game, onGameEnd }: GameProps) => {
         setTimeout(() => onGameEnd?.(newScore), 2600);
       }
     },
-    [score, currentRound]
+    [score, currentRound, startRound, game, onGameEnd]
   );
 
   const onQuit = useCallback(() => {
     setScore(0);
     setCollecting(true);
     setTimeout(() => onGameEnd?.(0), 2000);
-  }, []);
+  }, [onGameEnd]);
 
   return (
     <div className={styles.container}>

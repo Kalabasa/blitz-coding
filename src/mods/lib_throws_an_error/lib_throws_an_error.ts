@@ -61,4 +61,5 @@ var throwsAnError = function(){
   Object.defineProperty(fn, id, { value: id });
   return fn;
 };
+var throws_an_error = throwsAnError;
 `;

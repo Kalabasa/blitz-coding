@@ -11,14 +11,14 @@ import { CardBackFace } from "ui/puzzle_card/card_backface";
 import "ui/styles/nord.css";
 import styles from "./app.module.css";
 
-type Deck = {
+type GameDeck = {
   name: string;
   description: string;
   difficulty: Difficulty;
   rounds: number;
 };
 
-const gameDecks: Deck[] = [
+const gameDecks: GameDeck[] = [
   {
     name: "Easy",
     description: "Trivial one-liners and basic algorithms.",
@@ -33,27 +33,26 @@ const gameDecks: Deck[] = [
   },
   {
     name: "Medium",
-    description: "Simple algorithms with Modifiers.",
+    description: "Simple puzzles with quirks and intermediate algorithms.",
     difficulty: Difficulty.Medium,
     rounds: 6,
   },
   {
     name: "Medium Marathon",
-    description: "Simple algorithms with Modifiers.",
+    description: "Simple puzzles with quirks and intermediate algorithms.",
     difficulty: Difficulty.Medium,
     rounds: 20,
   },
   {
     name: "Hard",
-    description:
-      "Simple and complex puzzlers with tricky edge cases and Modifiers.",
+    description: "Simple and complex puzzlers with tricky edge cases.",
     difficulty: Difficulty.Hard,
     rounds: 6,
   },
   {
     name: "Impossible",
     difficulty: Difficulty.Impossible,
-    description: "Challenges fit for a JavaScript spec implementer.",
+    description: "Challenges for computer scientists and JavaScript experts.",
     rounds: 6,
   },
 ];

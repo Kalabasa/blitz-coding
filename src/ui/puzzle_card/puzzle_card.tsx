@@ -10,7 +10,6 @@ import {
 import { Icon } from "ui/icon/icon";
 import { ReactComponent as PlaySVG } from "ui/icon/svg/play.svg";
 import { ReactComponent as WaitSVG } from "ui/icon/svg/wait.svg";
-import { Logo } from "ui/logo/logo";
 import { CardBackFace } from "ui/puzzle_card/card_backface";
 import styles from "./puzzle_card.module.css";
 
@@ -119,6 +118,17 @@ export const PuzzleCard = ({
               <Icon svg={PlaySVG} />
             </button>
           )}
+        </div>
+        <div
+          className={classNames({
+            [styles.executePopup]: true,
+            [styles.executePopupExecuting]: executing,
+          })}
+        >
+          Running
+          <span className={styles.executingIcon}>
+            <Icon svg={WaitSVG} />
+          </span>
         </div>
       </div>
       <div className={styles.backface}>

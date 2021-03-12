@@ -31,6 +31,7 @@ const LightBase = ({ ctx, color }: LightProps & { ctx: LightContext }) => {
       startTime: now,
       endTime: now + parseFloat(styles.lightDuration) * 1000,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [color]
   );
 
@@ -41,10 +42,12 @@ const LightBase = ({ ctx, color }: LightProps & { ctx: LightContext }) => {
       ctx.updateColors();
       setTimeout(() => ctx.updateColors(), globalLight.endTime - Date.now());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalLight, ctx.colorsRef.current, ctx.updateColors]);
 
   const backLightColor = interpolateColor(color, Color.background, 0.96);
   const backLightStyle = {
+    // eslint-disable-next-line no-useless-computed-key
     ["--backLightColor"]: `rgb(${backLightColor.r},${backLightColor.g},${backLightColor.b})`,
   } as CSSProperties;
 
@@ -70,7 +73,8 @@ export const BackLightPortal = () => (
 export const LightContainer = ({ children }: PropsWithChildren<{}>) => {
   const backLightPortal = useRef<HTMLDivElement>(null);
   const colorsRef = useRef<Set<GlobalLight>>(new Set());
-  const [lights, setLights] = useState<GlobalLight[]>([]);
+  // TODO Multiple lights
+  const [, setLights] = useState<GlobalLight[]>([]);
 
   const updateColors = useCallback(() => {
     const colorSet = colorsRef.current;
@@ -100,6 +104,8 @@ type LightContext = {
   colorsRef: RefObject<Set<GlobalLight>>;
   updateColors: () => void;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const LightContext = createContext<LightContext>({
   backLightPortal: { current: null },
   colorsRef: { current: null },

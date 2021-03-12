@@ -44,9 +44,10 @@ export const createReverseString: RoundGenerator = {
     fn: reverseString,
     params: [
       difficulty >= Difficulty.Medium,
-      difficulty >= Difficulty.Hard,
-      difficulty >= Difficulty.Hard,
-      difficulty >= Difficulty.Medium && Math.random() < 0.5,
+      difficulty >= Difficulty.Impossible,
+      difficulty >= Difficulty.Impossible,
+      (difficulty >= Difficulty.Medium && Math.random() < 0.8) ||
+        difficulty >= Difficulty.Hard,
     ],
   }),
 };

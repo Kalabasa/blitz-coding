@@ -31,6 +31,7 @@ export const Deck = ({
   useLayoutEffect(() => {
     if (!rootRef.current || selected) return;
     clientRectRef.current = rootRef.current.getBoundingClientRect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootRef.current]);
 
   let style: CSSProperties | undefined = undefined;

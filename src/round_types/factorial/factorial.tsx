@@ -1,22 +1,22 @@
 import memoize from "fast-memoize";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { modBanRecursion } from "mods/ban_recursion/ban_recursion";
+import { modBanOperation } from "mods/ban_operation/ban_operation";
 import { rangeCases } from "round_types/utils";
 import { GraphicsProps } from "ui/puzzle_graphics/graphics";
 import { Sequence } from "ui/puzzle_graphics/sequence/sequence";
 
-const fibonacciSequence = (noRecursion: boolean): Round => ({
-  time: 40 + (noRecursion ? 40 : 0),
+const factorial = (noMultiply: boolean): Round => ({
+  time: 30 + (noMultiply ? 100 : 0),
   suite: {
-    funcName: "fibonacci",
+    funcName: "factorial",
     inputNames: ["n"],
     cases: rangeCases(1, 20, (i) => ({
       inputs: [i],
-      output: fib(i),
+      output: fac(i),
     })),
   },
-  mods: noRecursion ? [modBanRecursion("fibonacci")] : [],
+  mods: noMultiply ? [modBanOperation("*")] : [],
   Graphics,
 });
 
@@ -24,17 +24,17 @@ const Graphics = ({ suite, runs }: GraphicsProps) => (
   <Sequence length={6} suite={suite} runs={runs} />
 );
 
-export const createFibonacciSequence: RoundGenerator = {
+export const createFactorial: RoundGenerator = {
   minDifficulty: Difficulty.Medium,
   weight: 1,
   create: (difficulty: Difficulty) => ({
-    fn: fibonacciSequence,
-    params: [difficulty > Difficulty.Easy && Math.random() < 0.5],
+    fn: factorial,
+    params: [difficulty >= Difficulty.Hard && Math.random() < 0.5],
   }),
 };
 
-const fib: (n: number) => number = memoize((n: number) => {
+const fac: (n: number) => number = memoize((n: number) => {
   if (n <= 0) return 0;
-  if (n <= 2) return 1;
-  return fib(n - 1) + fib(n - 2);
+  if (n <= 1) return 1;
+  return n * fac(n - 1);
 });

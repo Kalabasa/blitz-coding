@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { debounce } from "debounce";
 import { Game, RoundResult } from "game/game";
 import { Round } from "game/types";
 import { Mod } from "mods/mod";
@@ -86,7 +85,7 @@ export const RoundView = ({
       onResult(res, end);
       setExecuting(false);
     },
-    [onRoundEnd]
+    [onResult]
   );
 
   // This callback is a ref so that async callbacks will submit the latest code.
@@ -98,22 +97,11 @@ export const RoundView = ({
 
       setExecuting(true);
 
-      enqueueRunCode.clear();
       runCode(code, round, logsRef.current, (res) =>
         onRun(res, res.success || final)
       );
     };
-  }, [code, round, roundStep, logsRef.current, onRun]);
-
-  const setAndRunCode = useCallback(
-    (cd: string) => {
-      setCode(cd);
-      enqueueRunCode(cd, round, logsRef.current, (res) =>
-        onRun(res, res.success)
-      );
-    },
-    [round, logsRef.current, onRun]
-  );
+  }, [code, round, roundStep, onRun]);
 
   const quit = useCallback(() => {
     setRoundStep(RoundStep.Flip);
@@ -139,8 +127,11 @@ export const RoundView = ({
       timeoutHandle.current = setTimeout(() => {
         submitRef.current?.(true);
       }, end - Date.now());
-    } else if (collect) {
-      setRoundStep(RoundStep.Collect);
+    } else {
+      clearTimeout(timeoutHandle.current);
+      if (collect) {
+        setRoundStep(RoundStep.Collect);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, roundStep, collect, onResult]);
@@ -208,7 +199,7 @@ export const RoundView = ({
             </>
           }
           editor={
-            <Editor disabled={!isPlaying} code={code} setCode={setAndRunCode} />
+            <Editor disabled={!isPlaying} code={code} setCode={setCode} />
           }
           modCode={modCode}
           codePrefix={`function ${funcName}( ${inputNames.join(", ")} ) {`}
@@ -253,8 +244,6 @@ export const RoundView = ({
   );
 };
 
-const enqueueRunCode = debounce(runCode, 2000);
-
 function runCode(
   code: string,
   round: Round,
@@ -268,7 +257,9 @@ function runCode(
     outLogs.push(data?.map((d) => d?.toString()).join(" "));
   };
 
-  Game.runRound(code, round, logger).then(onRun);
+  setTimeout(() => {
+    Game.runRound(code, round, logger).then(onRun);
+  });
 }
 
 function formatMods(mods?: Mod[]) {

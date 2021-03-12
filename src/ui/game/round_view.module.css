@@ -173,7 +173,7 @@
 }
 @keyframes currentCardCollect {
   50%,
-  80% {
+  70% {
     transform: translate3d(0, -60px, 0) rotateY(-180deg);
   }
   to {
@@ -186,7 +186,7 @@
 }
 @keyframes prevCardCollect {
   50%,
-  80% {
+  70% {
     transform: translate3d(0, -48px, 0) rotateY(-180deg);
   }
   to {
@@ -199,7 +199,7 @@
 }
 @keyframes prevPrevCardCollect {
   50%,
-  80% {
+  70% {
     transform: translate3d(0, -36px, 0) rotateY(-180deg);
   }
   to {
@@ -212,7 +212,7 @@
 }
 @keyframes farPrevCardCollect {
   50%,
-  80% {
+  70% {
     transform: translate3d(0, -24px, 0) rotateY(-180deg);
   }
   to {

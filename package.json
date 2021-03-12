@@ -9,7 +9,6 @@
     "acorn-walk": "^8.0.2",
     "classnames": "^2.2.6",
     "dale-chall": "^1.0.4",
-    "debounce": "^1.2.0",
     "deep-equal": "^2.0.5",
     "fast-memoize": "^2.5.2",
     "prismjs": "^1.23.0",
@@ -48,7 +47,6 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.2.11",
-    "@types/debounce": "^1.2.0",
     "@types/deep-equal": "^1.0.1",
     "@types/prismjs": "^1.16.3",
     "@types/react": "^17.0.2",

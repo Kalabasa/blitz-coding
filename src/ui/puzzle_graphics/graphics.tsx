@@ -17,9 +17,21 @@ export type GraphicsProps = {
   runs?: Run[];
 };
 
-export function formatValue(value: unknown): ReactNode {
+export type FormatOptions = {
+  ignoreFormatString?: boolean;
+  maxFunctionLength?: number;
+};
+
+export const toFormatString = Symbol("toFormatString");
+
+export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
   if (value === undefined) return "undefined";
   if (value === null) return "null";
+
+  if (!opts?.ignoreFormatString && (value as any)[toFormatString]) {
+    return (value as any)[toFormatString]();
+  }
+
   value = (value as any).valueOf();
 
   if (value instanceof Array || Array.isArray(value)) {
@@ -29,7 +41,7 @@ export function formatValue(value: unknown): ReactNode {
         {value.map((v, i) => (
           <Fragment key={i}>
             {i > 0 && <Sym>,&#8203;</Sym>}
-            {formatValue(v)}
+            {formatValue(v, opts)}
           </Fragment>
         ))}
         <Sym>]</Sym>
@@ -47,6 +59,14 @@ export function formatValue(value: unknown): ReactNode {
         </>
       );
     case "number":
+      if (
+        Number.isNaN(value) ||
+        value === Number.POSITIVE_INFINITY ||
+        value === Number.NEGATIVE_INFINITY
+      ) {
+        return "" + value;
+      }
+
       let num = value * 100;
 
       const floatError = Math.abs(num - Math.round(num)) < 1e-12;
@@ -54,25 +74,30 @@ export function formatValue(value: unknown): ReactNode {
         num = Math.round(100 * num) / 100;
       }
 
+      const truncate =
+        Math.abs(Math.round(Math.abs(num)) - Math.abs(num)) > 1e-6;
       const sign = Math.sign(num);
-      const decimal = Math.floor(Math.abs(num)).toString().padStart(3, "0");
+
+      const decimal = Math.round(Math.abs(num)).toString().padStart(3, "0");
       const integral = decimal.slice(0, -2);
-      const fractional = decimal.slice(-2).replace(/0+$/, "");
-      const truncated =
-        Math.abs(Math.floor(Math.abs(num)) - Math.abs(num)) > 1e-6;
+      let fractional = decimal.slice(-2);
+      if (!truncate) fractional = fractional.replace(/0+$/, "");
+
       return (
         <>
           {sign < 0 ? "-" : ""}
           {integral ?? "0"}
           {fractional ? "." + fractional : ""}
-          {truncated ? <Sym>…</Sym> : ""}
+          {truncate ? <Sym>…</Sym> : ""}
         </>
       );
     case "boolean":
       return "" + value;
     case "function":
       const funcStr = value.toString();
-      return funcStr.length <= "()=>12345678".length ? funcStr : "Function";
+      return funcStr && funcStr.length <= (opts?.maxFunctionLength ?? 12)
+        ? funcStr
+        : value.name ?? "Function";
     case "object":
       if (value === null) return "null";
       if (value instanceof Date) return value.toISOString();
@@ -86,7 +111,7 @@ export function formatValue(value: unknown): ReactNode {
                 {i > 0 && <Sym>,&#8203;</Sym>}
                 {key}
                 <Sym>:</Sym>
-                {formatValue((value as any)[k])}
+                {formatValue((value as any)[k], opts)}
               </Fragment>
             );
           })}

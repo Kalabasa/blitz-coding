@@ -1,15 +1,26 @@
 import deepEqual from "deep-equal";
 import { Difficulty, Round } from "game/types";
+import { create24To12 } from "round_types/24_to_12/24_to_12";
+import { createAbbreviate } from "round_types/abbreviate/abbreviate";
 import { createArithmetic } from "round_types/arithmetic/arithmetic";
 import { createArrayEquals } from "round_types/array_equals/array_equals";
 import { createSortArray } from "round_types/array_sort/array_sort";
 import { createCountMultiOccurences } from "round_types/count_multiple_occurences/count_multiple_occurences";
 import { createCountOccurences } from "round_types/count_occurences/count_occurences";
+import { createFactorial } from "round_types/factorial/factorial";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
+import { createHigherLower } from "round_types/higher_lower/higher_lower";
 import { createIsEven } from "round_types/is_even/is_even";
-import { createPower } from 'round_types/power/power';
+import { createIsPalindrome } from "round_types/is_palindrome/is_palindrome";
+import { createListToArray } from "round_types/list_to_array/list_to_array";
+import { createMathExpression } from "round_types/math_expression/math_expression";
+import { createPower } from "round_types/power/power";
 import { createQuadSequence } from "round_types/quad_sequence/quad_sequence";
+import { createRockPaperScissors } from "round_types/rock_paper_scissors/rock_paper_scissors";
+import { createSparkline } from "round_types/sparkline/sparkline";
+import { createSqrt } from "round_types/sqrt/sqrt";
 import { createReverseString } from "round_types/string_reverse/string_reverse";
+import { createTicTacToe } from "round_types/tic_tac_toe/tic_tac_toe";
 
 const allRoundGens: RoundGenerator[] = [
   // createIsEven,
@@ -21,7 +32,18 @@ const allRoundGens: RoundGenerator[] = [
   // createCountOccurences,
   // createCountMultiOccurences,
   // createArithmetic,
-  createPower,
+  // createPower,
+  // createHigherLower,
+  // createMathExpression,
+  // createFactorial,
+  // createTicTacToe,
+  // createListToArray,
+  // create24To12,
+  // createRockPaperScissors,
+  // createIsPalindrome,
+  // createAbbreviate,
+  // createSqrt,
+  createSparkline,
 ];
 
 export type RoundType<P extends unknown[] = any[]> = {

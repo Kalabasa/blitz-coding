@@ -20,7 +20,7 @@ const countOccurences = (
   time: 30 + (noAdd ? 30 : 0),
   suite: {
     funcName: "count",
-    inputNames: ["v", "a"],
+    inputNames: ["x", "a"],
     cases: rangeCases(0, 20, (i) => {
       const pool: any[] = withSpecial && i < 5 ? specialPool : elementPool;
 

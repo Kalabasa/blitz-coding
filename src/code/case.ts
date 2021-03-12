@@ -11,6 +11,7 @@ function matchOutput(output: any, ex: Case): boolean {
 }
 
 function equal(a: any, b: any): boolean {
+  // eslint-disable-next-line eqeqeq
   if (a == b) return true;
 
   const aIsArray = a instanceof Array || Array.isArray(a);

@@ -64,6 +64,7 @@
 .inputValue {
   composes: value;
   flex: 1 1 75%;
+  white-space: pre-wrap;
 }
 
 .funcName {
