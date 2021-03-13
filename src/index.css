@@ -9,10 +9,17 @@ body,
   height: 100%;
 }
 
-body {
+html {
   font-family: "JetBrains Mono", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 12px;
+}
+
+@media (max-height: 800px) {
+  html {
+    font-size: 10px;
+  }
 }
 
 pre {

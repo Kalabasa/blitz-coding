@@ -21,17 +21,17 @@ const hangman = (maxGuessMultiplier?: number): Round => {
     suite: {
       funcName: "playHangman",
       inputNames: ["makeGuess", "length", "allWords"],
-      cases: rangeCases(0, 20, () => {
+      cases: rangeCases(0, 14, () => {
         const currentWords = sample(20, hangmanWords);
         (currentWords as any)[toFormatString] = () => "array<string>";
 
         const word = pick(currentWords);
 
-        let makeGuess = (letter: string) => word.indexOf(letter);
+        let makeGuess = (letter: string) => indexOfAll(letter, word);
         if (maxGuessMultiplier) {
           makeGuess = limitCalls(makeGuess, maxGuesses);
         }
-        makeGuess = formattedFunction(makeGuess, `c=>'${word}'.indexOf(c)`);
+        makeGuess = formattedFunction(makeGuess, `c=>indexOfAll(c,'${word}')`);
 
         return {
           inputs: [makeGuess, word.length, currentWords],
@@ -39,14 +39,20 @@ const hangman = (maxGuessMultiplier?: number): Round => {
         };
       }),
     },
-    mods: maxGuessMultiplier
-      ? [
-          modText("limit_function_calls", [
-            "'makeGuess'",
-            maxGuesses.toString(),
-          ]),
-        ]
-      : [],
+    mods: [
+      {
+        code: `/*icon:add*/ var indexOfAll = (s,h,o=0) =>
+     (i=h.indexOf(s,o))>=0?[i,...indexOfAll(s,h,i+1)]:[]`,
+      },
+      ...(maxGuessMultiplier
+        ? [
+            modText("limit_function_calls", [
+              "'makeGuess'",
+              maxGuesses.toString(),
+            ]),
+          ]
+        : []),
+    ],
     Graphics: createPlainCaseGridGraphics(2, 1),
   };
 };
@@ -65,6 +71,15 @@ export const createHangman: RoundGenerator = {
     ],
   }),
 };
+
+function indexOfAll(
+  needle: string,
+  haystack: string,
+  start?: number
+): number[] {
+  const i = haystack.indexOf(needle, start);
+  return i >= 0 ? [i, ...indexOfAll(needle, haystack, i + 1)] : [];
+}
 
 const hangmanWords = sample(
   100,
@@ -110,12 +125,7 @@ function minGuess(word: string, availableWords: string[]): number {
       // correct guess
 
       // find letter positions
-      const positions: number[] = [];
-      for (
-        let p = -1;
-        (p = word.indexOf(guess, p + 1)) >= 0;
-        positions.push(p)
-      );
+      const positions: number[] = indexOfAll(guess, word);
 
       // discard all non-matching words left
       wordsLeft = wordsLeft.filter((s) =>

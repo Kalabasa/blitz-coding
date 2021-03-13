@@ -22,7 +22,7 @@ const sparkline = (quantization: number, provideBars: boolean): Round => ({
         output: generateSparkline(data),
       })),
   },
-  mods: provideBars ? [{ code: "var bars = '" + bars + "'" }] : [],
+  mods: provideBars ? [{ code: "/*icon:add*/ var bars = '" + bars + "'" }] : [],
   Graphics: createPlainCaseGridGraphics(3, 1),
 });
 

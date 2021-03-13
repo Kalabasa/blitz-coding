@@ -6,7 +6,7 @@ export const modBanOperation = (...operators: string[]): Mod => ({
     .map((op) => `'${op}'`)
     .join(", ")} )`,
   libraryCode: "function ban_operation(){}",
-  preCheck: banSyntaxPreCheck(
+  preprocess: banSyntaxPreCheck(
     {
       UnaryExpression: (node) => operators.includes(node.operator),
       BinaryExpression: (node) => operators.includes(node.operator),

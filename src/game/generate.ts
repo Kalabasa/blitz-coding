@@ -5,8 +5,10 @@ import { createAbbreviate } from "round_types/abbreviate/abbreviate";
 import { createArithmetic } from "round_types/arithmetic/arithmetic";
 import { createArrayEquals } from "round_types/array_equals/array_equals";
 import { createSortArray } from "round_types/array_sort/array_sort";
+import { createAverage } from "round_types/average/average";
 import { createCountMultiOccurences } from "round_types/count_multiple_occurences/count_multiple_occurences";
 import { createCountOccurences } from "round_types/count_occurences/count_occurences";
+import { createDiceSum } from "round_types/dice_sum/dice_sum";
 import { createFactorial } from "round_types/factorial/factorial";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
 import { createHangman } from "round_types/hangman/hangman";
@@ -26,30 +28,32 @@ import { createTicTacToe } from "round_types/tic_tac_toe/tic_tac_toe";
 import { createZip } from "round_types/zip/zip";
 
 const allRoundGens: RoundGenerator[] = [
-  create24To12,
-  createAbbreviate,
-  createArithmetic,
-  createArrayEquals,
-  createCountMultiOccurences,
-  createCountOccurences,
-  createFactorial,
-  createFibonacciSequence,
-  createHangman,
-  createHigherLower,
-  createIsEven,
-  createIsPalindrome,
-  createListToArray,
-  createMathExpression,
-  createPower,
-  createQuadSequence,
-  createRange,
-  createReverseString,
-  createRockPaperScissors,
-  createSortArray,
-  createSparkline,
-  createSqrt,
-  createTicTacToe,
-  createZip,
+  // create24To12,
+  // createAbbreviate,
+  // createArithmetic,
+  // createArrayEquals,
+  // createAverage,
+  // createCountMultiOccurences,
+  // createCountOccurences,
+  createDiceSum,
+  // createFactorial,
+  // createFibonacciSequence,
+  // createHangman,
+  // createHigherLower,
+  // createIsEven,
+  // createIsPalindrome,
+  // createListToArray,
+  // createMathExpression,
+  // createPower,
+  // createQuadSequence,
+  // createRange,
+  // createReverseString,
+  // createRockPaperScissors,
+  // createSortArray,
+  // createSparkline,
+  // createSqrt,
+  // createTicTacToe,
+  // createZip,
 ];
 
 export type RoundType<P extends unknown[] = any[]> = {

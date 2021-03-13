@@ -4,7 +4,7 @@ import { Mod } from "mods/mod";
 export const modBanLoops = (): Mod => ({
   code: `/*icon:ban*/ ban_loops()`,
   libraryCode: "function ban_loops(){}",
-  preCheck: banSyntaxPreCheck(
+  preprocess: banSyntaxPreCheck(
     {
       WhileStatement: () => true,
       DoWhileStatement: () => true,

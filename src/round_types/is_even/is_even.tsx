@@ -9,11 +9,11 @@ const isEven = (
   withNegatives: boolean,
   noModulo: boolean
 ): Round => ({
-  time: 20 + (noModulo ? 20 : 0),
+  time: 20 + Number(noModulo) * 20,
   suite: {
     funcName: inverted ? "isOdd" : "isEven",
     inputNames: ["n"],
-    cases: range(withNegatives ? -15 : 0, 25)
+    cases: range(withNegatives ? -15 : 0, 15)
       .map((i) => (i <= 6 ? i : (i - 4) * i))
       .map((i) => ({
         inputs: [i],

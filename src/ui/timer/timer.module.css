@@ -14,7 +14,7 @@
   align-items: center;
   width: 100%;
   opacity: 0;
-  transform: translateY(6px);;
+  transform: translateY(0.5rem);
   transition: opacity 0.1s linear, transform 0.1s ease;
 }
 
@@ -33,7 +33,7 @@
 
 .timeDisplay {
   display: inline-block;
-  font-size: 72px;
+  font-size: 6rem;
   font-weight: lighter;
   white-space: pre;
   transform: scale(0.5);
@@ -78,13 +78,6 @@
   background: var(--barColor, white);
   overflow: hidden;
   box-sizing: border-box;
-}
-.bar::after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 50%;
-  width: 60px;
 }
 
 .warnHigh .bar {

@@ -11,14 +11,14 @@ const power = (
   noMathPow: boolean,
   noNativeOperation: boolean
 ): Round => ({
-  time: 20 + (noMathPow && noNativeOperation ? 30 : 0),
+  time: 20 + Number(noMathPow && noNativeOperation) * 30,
   suite: {
     funcName: "power",
     inputNames: ["b", "e"],
-    cases: rangeCases(0, 30, (i) => {
+    cases: rangeCases(0, 14, (i) => {
       const base = i < 1 ? 1 : randomInt(2, 9);
       let exponent =
-        withNegativeExponents && i < 10 ? randomInt(-2, -1) : randomInt(0, 9);
+        withNegativeExponents && i < 5 ? randomInt(-2, -1) : randomInt(0, 9);
 
       if (withNonIntegers) {
         exponent *= 0.9 + (Math.random() * 0.2 - 0.1);

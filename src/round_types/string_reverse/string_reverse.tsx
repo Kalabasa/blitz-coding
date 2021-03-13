@@ -11,11 +11,11 @@ const reverseString = (
   includeZalgo: boolean,
   banReverse: boolean
 ): Round => ({
-  time: 30 + (banReverse ? 30 : 0),
+  time: 30 + Number(banReverse) * 30,
   suite: {
     funcName: "reverseString",
     inputNames: ["s"],
-    cases: sample(20, words)
+    cases: sample(15, words)
       .map((word) => word.split(""))
       .concat(empty(includeEmpty))
       .concat(zalgo(includeZalgo))

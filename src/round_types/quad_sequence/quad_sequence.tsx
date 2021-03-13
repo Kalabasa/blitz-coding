@@ -9,7 +9,7 @@ const quadSequence = (a: number, b: number, c: number) => ({
   suite: {
     funcName: "sequence",
     inputNames: ["n"],
-    cases: rangeCases(1, 20, (i) => ({
+    cases: rangeCases(1, 15, (i) => ({
       inputs: [i],
       output: a * i * i + b * i + c,
     })),

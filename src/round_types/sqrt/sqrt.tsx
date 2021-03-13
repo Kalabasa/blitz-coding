@@ -21,7 +21,7 @@ const sqrt = (
   suite: {
     funcName: "sqrt",
     inputNames: ["n"],
-    cases: getNumbers(20, withMaxRange)
+    cases: getNumbers(15, withMaxRange)
       .map((i) => (withImperfectSquares ? Math.sqrt(i) : Math.ceil(i)))
       .filter(mapUnique)
       .map((root) => ({
@@ -45,7 +45,8 @@ export const createSqrt: RoundGenerator = {
       difficulty >= Difficulty.Medium,
       difficulty >= Difficulty.Hard,
       Math.random() < 0.95 || difficulty >= Difficulty.Medium,
-      Math.random() < 0.8 || difficulty >= Difficulty.Hard,
+      (difficulty >= Difficulty.Medium && Math.random() < 0.8) ||
+        difficulty >= Difficulty.Hard,
     ],
   }),
 };

@@ -13,7 +13,7 @@ const mathExpression = (seed: any, terms: number, budget: number) => {
     suite: {
       funcName: "math",
       inputNames: ["n"],
-      cases: rangeCases(1, 20, (i) => {
+      cases: rangeCases(1, 15, (i) => {
         const n = randomInt(Math.floor(curve(i)), Math.floor(curve(i + 1)) - 1);
         return {
           inputs: [n],

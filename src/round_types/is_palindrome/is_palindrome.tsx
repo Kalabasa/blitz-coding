@@ -11,7 +11,7 @@ const isPalindrome = (
   includeZalgo: boolean,
   banReverse?: boolean
 ): Round => ({
-  time: 30 + (banReverse ? 30 : 0),
+  time: 30 + Number(banReverse) * 30,
   suite: {
     funcName: "isPalindrome",
     inputNames: ["s"],

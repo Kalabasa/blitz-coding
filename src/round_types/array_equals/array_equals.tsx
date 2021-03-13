@@ -7,7 +7,7 @@ import {
   range,
   rangeCases,
   sample,
-  shuffle
+  shuffle,
 } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
@@ -32,9 +32,9 @@ const arrayEquals = ({
   suite: {
     funcName: ignoreOrder ? "equalSets" : "equalArrays",
     inputNames: ["a", "b"],
-    cases: rangeCases(0, 40, (i) => {
-      const mixedTypesNow = mixedTypes === "regular" && i < 35;
-      const specialTypesNow = mixedTypes === "special" && i < 35;
+    cases: rangeCases(0, 14, (i) => {
+      const mixedTypesNow = mixedTypes === "regular" && i < 10;
+      const specialTypesNow = mixedTypes === "special" && i < 10;
       const varyLengthNow = varyLength && i < 5;
 
       const pool = specialTypesNow

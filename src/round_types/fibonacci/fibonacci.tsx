@@ -7,11 +7,11 @@ import { GraphicsProps } from "ui/puzzle_graphics/graphics";
 import { Sequence } from "ui/puzzle_graphics/sequence/sequence";
 
 const fibonacciSequence = (noRecursion: boolean): Round => ({
-  time: 40 + (noRecursion ? 40 : 0),
+  time: 40 + Number(noRecursion) * 40,
   suite: {
     funcName: "fibonacci",
     inputNames: ["n"],
-    cases: rangeCases(1, 20, (i) => ({
+    cases: rangeCases(1, 15, (i) => ({
       inputs: [i],
       output: fib(i),
     })),

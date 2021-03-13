@@ -7,11 +7,11 @@ import { GraphicsProps } from "ui/puzzle_graphics/graphics";
 import { Sequence } from "ui/puzzle_graphics/sequence/sequence";
 
 const factorial = (noMultiply: boolean): Round => ({
-  time: 30 + (noMultiply ? 100 : 0),
+  time: 30 + Number(noMultiply) * 100,
   suite: {
     funcName: "factorial",
     inputNames: ["n"],
-    cases: rangeCases(1, 20, (i) => ({
+    cases: rangeCases(1, 12, (i) => ({
       inputs: [i],
       output: fac(i),
     })),

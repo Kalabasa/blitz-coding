@@ -48,11 +48,7 @@ export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
   if (value instanceof Array || Array.isArray(value)) {
     if (style === "shortest") {
       const json = JSON.stringify(value);
-      const alt = shortest([
-        (value as any)[toFormatString]?.(),
-        value.toString(),
-        "array",
-      ]);
+      const alt = shortest([(value as any)[toFormatString]?.(), "array"]);
       if (alt.length < json.length) return alt;
     }
 

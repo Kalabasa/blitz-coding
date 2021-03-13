@@ -2,12 +2,12 @@ import * as acorn from "acorn";
 import * as walk from "acorn-walk";
 import { iife, Mod } from "mods/mod";
 
-type ModPreCheck = Mod["preCheck"];
+type ModPreprocess = Mod["preprocess"];
 
 export const banSyntaxPreCheck = (
   rules: { [type in string]: (node: acorn.Node & any) => boolean },
   message: (node: acorn.Node & any) => string
-): ModPreCheck => (code: string) => {
+): ModPreprocess => (code: string) => {
   const visitors = Object.fromEntries(
     Object.entries(rules).map(([type, rule]) => [
       type,

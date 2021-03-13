@@ -1,9 +1,9 @@
 export type Mod = {
-  code: string;
+  code?: string;
   hiddenCode?: string;
   libraryCode?: string | string[];
   cleanupCode?: string;
-  preCheck?: (code: string) => void;
+  preprocess?: (code: string) => string | void;
 };
 
 function generateSetupCode(mods: Mod[]): string {

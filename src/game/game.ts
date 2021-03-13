@@ -34,8 +34,17 @@ async function runRound(
   logger?: (...data: any[]) => void
 ): Promise<RoundResult> {
   try {
+    let origCode = code;
+
     for (let mod of round.mods ?? []) {
-      mod.preCheck?.(code);
+      const result = mod.preprocess?.(code);
+      if (result !== undefined && typeof result === "string") {
+        code = result;
+      }
+    }
+
+    if (code !== origCode) {
+      code = "//" + origCode.replaceAll("\n", "\n//") + "\n" + code;
     }
 
     const fn = Bootstrap.createFunction(

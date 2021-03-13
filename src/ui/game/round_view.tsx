@@ -265,9 +265,13 @@ function runCode(
 function formatMods(mods?: Mod[]) {
   if (!mods || !mods.length) return "";
 
-  return [...mods.map((mod) => mod.code).map(applyModCodeEmoji), ""].join(
-    ";\n"
-  );
+  return [
+    ...mods
+      .filter((mod) => mod.code)
+      .map((mod) => mod.code!)
+      .map(applyModCodeEmoji),
+    "",
+  ].join(";\n");
 }
 
 function applyModCodeEmoji(modCode: string) {
@@ -280,6 +284,7 @@ function applyModCodeEmoji(modCode: string) {
 const iconToEmoji: { [id in string]: string } = {
   change: "🔧",
   ban: "🚫",
+  add: "✏️",
 };
 
 // Swap args for better code sequence

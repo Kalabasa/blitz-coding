@@ -19,11 +19,11 @@ const higherLower = (
   const logLimit = Math.ceil((2.5 * Math.log2(high - low)) / 10) * 10;
 
   return {
-    time: 200 + (withNonIntegers ? 100 : 0),
+    time: 200 + Number(withNonIntegers) * 100,
     suite: {
       funcName: "playGuessTheNumber",
       inputNames: ["higher", "lower"],
-      cases: rangeCases(0, 20, (i) => {
+      cases: rangeCases(0, 14, (i) => {
         let n = randomInt(low, high);
         if (n < 0 && Math.random() < 0.8) n = -n;
 

@@ -15,7 +15,7 @@
     "input expectation"
     "result result";
   align-content: center;
-  padding: 12px;
+  padding: 1rem;
   background: puzzleGraphicsColor;
   animation: containerEntrance 0.6s calc(0.03s * var(--caseIndex, 0)) easeOut
     backwards;
@@ -29,18 +29,18 @@
 
 .inputSection {
   grid-area: input;
-  padding: 12px 6px 6px 12px;
+  padding: 1rem 0.25rem 0.25rem 1rem;
 }
 
 .expectationSection {
   grid-area: expectation;
-  padding: 12px 12px 6px 6px;
+  padding: 1rem 1rem 0.25rem 0.25rem;
 }
 
 .resultSection {
   position: relative;
   grid-area: result;
-  padding: 6px 12px 12px;
+  padding: 0.25rem 1rem 1rem;
   animation: resultEntrance 0.1s calc(0.2s + 0.03s * var(--caseIndex, 0)) linear
     backwards;
 }

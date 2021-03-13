@@ -8,7 +8,7 @@ import {
   range,
   rangeCases,
   sample,
-  shuffle
+  shuffle,
 } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
@@ -17,11 +17,11 @@ const countOccurences = (
   noAdd: boolean,
   noMaps: boolean
 ): Round => ({
-  time: 30 + (noAdd ? 30 : 0),
+  time: 30 + Number(noAdd) * 30,
   suite: {
     funcName: "count",
     inputNames: ["x", "a"],
-    cases: rangeCases(0, 20, (i) => {
+    cases: rangeCases(0, 14, (i) => {
       const pool: any[] = withSpecial && i < 5 ? specialPool : elementPool;
 
       const occurences = randomInt(0, 3);

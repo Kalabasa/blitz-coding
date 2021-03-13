@@ -3,6 +3,8 @@
 
 @value introEase: cubic-bezier(0.4, 0, 0.2, 1);
 
+@value cardWidth from "~ui/puzzle_card/puzzle_card.module.css";
+
 .container {
   position: absolute;
   display: flex;
@@ -23,15 +25,15 @@
 }
 
 .timerContainer {
-  width: 600px;
-  height: 108px;
+  width: cardWidth;
+  height: 9rem;
 }
 
 .gameInfoContainer {
   display: flex;
   justify-content: space-between;
-  width: 600px;
-  height: 60px;
+  width: cardWidth;
+  height: 5rem;
   transition: opacity 0.1s 0.6s linear;
 }
 .gameInfoContainerHidden {
@@ -62,7 +64,7 @@
 }
 .roundCount {
   flex: 1 1 70%;
-  font-size: 18px;
+  font-size: 1.5rem;
   font-weight: normal;
   text-align: center;
 }

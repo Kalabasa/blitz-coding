@@ -55,7 +55,7 @@ export const Timer = ({ startTime = 0, endTime = 0 }: TimerProps) => {
     >
       <TimeDisplay
         seconds={Math.floor(left / 1000)}
-        total={endTime - startTime}
+        total={Math.ceil((endTime - startTime) / 1000)}
       />
       <div ref={barRef} className={styles.bar}>
         <div className={styles.barEffects} />
@@ -93,7 +93,7 @@ function updateBarStyles(
 }
 
 function format(seconds: number, total: number) {
-  const secondsOnly = total <= 100 || seconds <= 60;
+  const secondsOnly = total <= 101 || seconds <= 60;
   if (secondsOnly) return seconds;
 
   const minutes = Math.floor(seconds / 60);

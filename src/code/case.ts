@@ -1,12 +1,16 @@
 export type Case = {
   inputs: any[];
   output: any;
+  outputCheck?: (value: any) => boolean;
   visibility?: "visible" | "discoverable";
 };
 
 function matchOutput(output: any, ex: Case): boolean {
   const a = output;
   const b = ex.output;
+
+  if (ex.outputCheck && !ex.outputCheck(a)) return false;
+
   return equal(a, b);
 }
 

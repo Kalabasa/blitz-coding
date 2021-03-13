@@ -19,7 +19,7 @@ const abbreviate = (
   suite: {
     funcName: "abbreviate",
     inputNames: ["s"],
-    cases: sample(20, phrases)
+    cases: sample(10, phrases)
       .concat(withHyphens ? hyphenatedPhrases : [])
       .map((phrase: string) => {
         return {

@@ -10,7 +10,7 @@ const zip = (noLoops: boolean): Round => ({
   suite: {
     funcName: "zip",
     inputNames: ["s", "t"],
-    cases: rangeCases(0, 20, (i) => {
+    cases: rangeCases(0, 14, (i) => {
       const [s, t] = sample(2, words);
       return {
         inputs: [s, t],

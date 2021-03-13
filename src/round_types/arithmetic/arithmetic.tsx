@@ -27,7 +27,7 @@ const arithmetic = (
   suite: {
     funcName: operation.name,
     inputNames: ["x", "y"],
-    cases: rangeCases(0, 30, (i) => {
+    cases: rangeCases(0, 14, (i) => {
       const low = operation === divide || operation === remainder ? 1 : 0;
       const high = 9;
 

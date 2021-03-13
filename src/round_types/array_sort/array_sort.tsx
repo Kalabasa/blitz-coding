@@ -15,11 +15,11 @@ const sortArray = (
   noNativeSort: boolean,
   stringSort: boolean
 ): Round => ({
-  time: 30 + (noNativeSort ? 90 : 0),
+  time: 30 + Number(noNativeSort) * 90,
   suite: {
     funcName: "sort",
     inputNames: ["a"],
-    cases: rangeCases(0, 20, (i) => {
+    cases: rangeCases(0, 14, (i) => {
       const array = numeric
         ? i < 5
           ? shuffle([

@@ -13,7 +13,7 @@ const getRange = (
   suite: {
     funcName: "range",
     inputNames: ["x", "y"],
-    cases: rangeCases(0, 20, (i) => {
+    cases: rangeCases(0, 15, (i) => {
       const min = randomInt(-10, 10);
       const max = min + randomInt(0, 20);
 

@@ -33,13 +33,13 @@ const gameDecks: GameDeck[] = [
   },
   {
     name: "Medium",
-    description: "Simple puzzles with quirks and intermediate algorithms.",
+    description: "Intermediate algorithms and quirky puzzles.",
     difficulty: Difficulty.Medium,
     rounds: 6,
   },
   {
     name: "Medium Marathon",
-    description: "Simple puzzles with quirks and intermediate algorithms.",
+    description: "Intermediate algorithms and quirky puzzles.",
     difficulty: Difficulty.Medium,
     rounds: 15,
   },
@@ -157,7 +157,7 @@ function getRemark(score: number, total: number) {
   let choices = [];
   if (score === total) {
     choices = ["Perfect!", "Fantastic!", "Impressive."];
-  } else if (score > total * 0.8) {
+  } else if (score > total * 0.7) {
     choices = [
       "Excellent!",
       "Awesome!",
@@ -166,28 +166,21 @@ function getRemark(score: number, total: number) {
       "Great!",
       "That's great!",
     ];
-  } else if (score > total * 0.5) {
+  } else if (score > total * 0.4) {
     choices = [
       "Good job!",
       "Great job!",
       "Cheers!",
       "Not bad!",
-      "That's not half bad!",
       "Cool!",
       "Nice!",
       "That's nice!",
       "Pretty good!",
     ];
-  } else if (score > total * 0.4) {
-    choices = [
-      "That's alright.",
-      "That's fine.",
-      "That's okay.",
-      "Not bad! Not good either.",
-    ];
+  } else if (score > total * 0.2) {
+    choices = ["That's alright.", "That's fine.", "That's okay."];
   } else if (score > 0) {
     choices = [
-      "Wow.",
       "You tried.",
       "Nice try!",
       "Try again!",

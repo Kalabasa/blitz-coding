@@ -68,6 +68,9 @@ export function formattedFunction<T extends Function>(
 
   dummy[funcName].toString = () => funcName;
   dummy[funcName][toFormatString] = () => source;
+  if ("toSource" in dummy[funcName]) {
+    (dummy[funcName] as any).toSource = () => funcName;
+  }
 
   return dummy[funcName];
 }
