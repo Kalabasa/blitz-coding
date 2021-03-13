@@ -1,13 +1,7 @@
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { modText } from "mods/mod_fake/mod_fake";
-import {
-  formattedFunction,
-  limitCalls,
-  pick,
-  rangeCases,
-  sample,
-} from "round_types/utils";
+import { createModLimitCalls } from "mods/limit_calls/limit_calls";
+import { formattedFunction, pick, rangeCases, sample } from "round_types/utils";
 import { words } from "round_types/words";
 import {
   createPlainCaseGridGraphics,
@@ -16,6 +10,12 @@ import {
 
 const hangman = (maxGuessMultiplier?: number): Round => {
   const maxGuesses = Math.ceil(globalMaxGuesses * (maxGuessMultiplier ?? 1));
+
+  const { modLimitCalls, limitCalls } = createModLimitCalls(
+    "makeGuess",
+    maxGuesses
+  );
+
   return {
     time: 300,
     suite: {
@@ -44,14 +44,7 @@ const hangman = (maxGuessMultiplier?: number): Round => {
         code: `/*icon:add*/ var indexOfAll = (s,h,o=0) =>
      (i=h.indexOf(s,o))>=0?[i,...indexOfAll(s,h,i+1)]:[]`,
       },
-      ...(maxGuessMultiplier
-        ? [
-            modText("limit_function_calls", [
-              "'makeGuess'",
-              maxGuesses.toString(),
-            ]),
-          ]
-        : []),
+      ...(maxGuessMultiplier ? [modLimitCalls] : []),
     ],
     Graphics: createPlainCaseGridGraphics(2, 1),
   };

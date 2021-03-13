@@ -69,7 +69,7 @@ function generateSetupCode(suite: Suite): string {
     return function(){
       var args = Array.prototype.slice.call(arguments);
 
-      if (args.some(v => v === undefined || Number.isNaN(v) || v === Number.POSITIVE_INFINITY || v === Number.NEGATIVE_INFINITY)) {
+      if (args.some(v => v === undefined || Number.isNaN(v) || v === Number.POSITIVE_INFINITY || v === Number.NEGATIVE_INFINITY || typeof v === 'function')) {
         return fn.apply(this, args);
       }
 

@@ -2,32 +2,53 @@ import * as acorn from "acorn";
 import * as walk from "acorn-walk";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
+import { createModLimitCalls } from "mods/limit_calls/limit_calls";
 import { Mod } from "mods/mod";
-import { formattedFunction, rangeCases } from "round_types/utils";
+import { formattedFunction, randomInt, rangeCases } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
-const diceSum = (): Round => {
-  const diceRollTag = "_" + Date.now() + "diceRoll";
+const diceSum = (rollLimit?: number): Round => {
+  const checksumKey = "_" + Date.now() + "diceRoll";
+  const key = randomInt(2, 4);
+
+  const { modLimitCalls, limitCalls } = createModLimitCalls(
+    "rollDice",
+    rollLimit ?? 0
+  );
 
   return {
     time: 100,
     suite: {
-      funcName: "sumDiceTo10",
+      funcName: "sumDiceTo7",
       inputNames: ["rollDice"],
-      cases: rangeCases(0, 9, () => {
-        const rollDice = formattedFunction(
-          () => doRollDice(diceRollTag),
+      cases: rangeCases(0, 14, () => {
+        let rollDice = () => doRollDice(checksumKey, key);
+
+        if (rollLimit) {
+          rollDice = limitCalls(rollDice, rollLimit);
+        }
+
+        rollDice = formattedFunction(
+          rollDice,
           `() => getRandom(1,2,3,4,5,6)`,
           "rollDice"
         );
 
         return {
           inputs: [rollDice],
-          output: 10,
+          output: 7,
           outputCheck: (output: any) => {
+            let cheating = false;
             if (typeof output === "number") {
+              cheating = true;
+            } else if (output instanceof Number) {
+              const expected = (output as any)[checksumKey];
+              const actual = key ** output.valueOf();
+              cheating = expected !== actual;
+            }
+            if (cheating) {
               throw new Error(
-                "Return value must be a sum purely from rollDice() results only."
+                "No cheating! Return value must be a sum of purely rollDice() results only."
               );
             }
             return true;
@@ -35,7 +56,10 @@ const diceSum = (): Round => {
         };
       }),
     },
-    mods: [modDiceAdditionOverload(diceRollTag)],
+    mods: [
+      modDiceAdditionOverload(checksumKey, key),
+      ...(rollLimit ? [modLimitCalls] : []),
+    ],
     Graphics: createPlainCaseGridGraphics(2, 1),
   };
 };
@@ -45,45 +69,41 @@ export const createDiceSum: RoundGenerator = {
   weight: 1,
   create: (difficulty: Difficulty) => ({
     fn: diceSum,
-    params: [],
+    params: [difficulty <= Difficulty.Easy ? undefined : 8],
   }),
 };
 
-function doRollDice(diceRollTag: string): Number {
-  return wrapAsDiceRoll(
-    // eslint-disable-next-line no-new-wrappers
-    new Number(Math.floor(Math.random() * 6) + 1),
-    diceRollTag
-  );
-}
+function doRollDice(checksumKey: string, key: number): Number {
+  // eslint-disable-next-line no-new-wrappers
+  const value = new Number(Math.floor(Math.random() * 6) + 1);
 
-function wrapAsDiceRoll(value: Number, diceRollTag: string): Number {
-  Object.defineProperty(value, diceRollTag, {
-    value: diceRollTag,
+  Object.defineProperty(value, checksumKey, {
+    value: key ** value.valueOf(),
     enumerable: false,
+    writable: false,
+    configurable: false,
   });
+
   return value;
 }
 
 type CodeWalkState = { start: number; end: number; insert: string }[];
 
-const modDiceAdditionOverload = (diceRollTag: string): Mod => {
+// TODO Refactor out into general modOverloadOperator(...);
+const modDiceAdditionOverload = (checksumKey: string, key: number): Mod => {
   const addFunc = "_" + Date.now() + "add";
   return {
     hiddenCode: `
 function ${addFunc}(a, b){
-  if (a === 0) return b;
-  if (b === 0) return a;
+  if (!a) return b;
+  if (!b) return a;
 
-  if (
-    a['${diceRollTag}'] !== '${diceRollTag}' ||
-    b['${diceRollTag}'] !== '${diceRollTag}'
-  ) {
+  if (a['${checksumKey}'] === undefined || b['${checksumKey}'] === undefined) {
     return a + b;
   }
 
-  const sum = new Number(a.valueOf() + b.valueOf());
-  sum.${diceRollTag} = '${diceRollTag}';
+  var sum = new Number(a.valueOf() + b.valueOf());
+  sum.${checksumKey} = a.${checksumKey} * b.${checksumKey};
   return sum;
 }`,
     preprocess: (code: string) => {
@@ -160,10 +180,7 @@ function ${addFunc}(a, b){
       const chars = [...code];
       splices.sort((a, b) => b.start - a.start);
       for (let splice of splices) {
-        console.log(splice);
-        console.log(chars.join(""));
         chars.splice(splice.start, splice.end - splice.start, ...splice.insert);
-        console.log(chars.join(""));
       }
 
       return chars.join("");

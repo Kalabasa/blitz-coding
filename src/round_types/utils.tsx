@@ -36,22 +36,6 @@ export function randomInt(
   );
 }
 
-export function limitCalls(fn: Function, limit: number) {
-  let calls = 0;
-  const dummy = {
-    [fn.name]: function () {
-      if (calls > limit) {
-        throw new Error(`${fn.name}() was called more than ${limit} times!`);
-      }
-
-      calls++;
-      // @ts-ignore
-      return fn.apply(this, arguments);
-    },
-  };
-  return dummy[fn.name];
-}
-
 export function formattedFunction<T extends Function>(
   fn: T,
   source: string,

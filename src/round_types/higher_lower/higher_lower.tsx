@@ -1,10 +1,10 @@
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
-import { modText } from "mods/mod_fake/mod_fake";
+import { createModLimitCalls } from "mods/limit_calls/limit_calls";
+import { modFake } from "mods/mod_fake/mod_fake";
 import {
   formattedFunction,
   formatValueText,
-  limitCalls,
   randomInt,
   rangeCases,
 } from "round_types/utils";
@@ -17,6 +17,15 @@ const higherLower = (
   const low = -100;
   const high = 100;
   const logLimit = Math.ceil((2.5 * Math.log2(high - low)) / 10) * 10;
+
+  const {
+    modLimitCalls: modLimitHigher,
+    limitCalls: limitHigherCalls,
+  } = createModLimitCalls("higher", logLimit);
+  const {
+    modLimitCalls: modLimitLower,
+    limitCalls: limitLowerCalls,
+  } = createModLimitCalls("lower", logLimit);
 
   return {
     time: 200 + Number(withNonIntegers) * 100,
@@ -36,8 +45,8 @@ const higherLower = (
         let lower = (guess: number) => guess < n;
 
         if (forceLogSearch) {
-          higher = limitCalls(higher, logLimit);
-          lower = limitCalls(lower, logLimit);
+          higher = limitHigherCalls(higher, logLimit);
+          lower = limitLowerCalls(lower, logLimit);
         }
 
         const formattedN = formatValueText(n);
@@ -51,12 +60,7 @@ const higherLower = (
         };
       }),
     },
-    mods: forceLogSearch
-      ? [
-          modText("limit_function_calls", ["'higher'", logLimit.toString()]),
-          modText("limit_function_calls", ["'lower'", logLimit.toString()]),
-        ]
-      : [],
+    mods: forceLogSearch ? [modLimitHigher, modLimitLower] : [],
     Graphics: createPlainCaseGridGraphics(3, 1),
   };
 };

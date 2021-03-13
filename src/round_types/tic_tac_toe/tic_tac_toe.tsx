@@ -51,10 +51,7 @@ function createCase(): { board: Board; winningMove: [number, number] } {
 
   const winningMove = playUntilWinningMove(board, "X");
 
-  if (!winningMove) {
-    console.debug(board);
-    throw Error("Logic error");
-  }
+  if (!winningMove) throw Error("Logic error");
 
   board[winningMove[0]][winningMove[1]] = "-";
 
