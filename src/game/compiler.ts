@@ -54,9 +54,9 @@ ${modCleanupCode}
 }
 `;
 
-  console.debug(code);
+  // console.debug(code);
   const mini = await minifyCode(code);
-  console.debug(mini);
+  // console.debug(mini);
   // eslint-disable-next-line no-new-func
   const fn = detachContext(mini, contextVar, ...inputVars);
 
