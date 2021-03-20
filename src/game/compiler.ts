@@ -244,7 +244,7 @@ async function minifyCode(code: string): Promise<string> {
   const mini = await minify(code, {
     mangle: false,
     parse: { bare_returns: true },
-    compress: { defaults: false },
+    compress: false,
   });
   return mini.code || code;
 }
