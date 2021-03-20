@@ -1,4 +1,5 @@
 @value ease from "~ui/styles/animation.module.css";
+@value textColor from "~ui/styles/colors.module.css";
 @value accentColor from "~ui/styles/colors.module.css";
 @value codeEditorColor from "~ui/styles/colors.module.css";
 @value codeEditorSecondaryColor from "~ui/styles/colors.module.css";
@@ -132,7 +133,6 @@
   background: transparent;
   outline: none;
   cursor: pointer;
-  filter: textFilter;
   transition: transform 0.1s ease;
 }
 .submitButton:hover {
@@ -140,6 +140,10 @@
 }
 .submitButton:active {
   transform: scale(0.96);
+}
+
+.playIcon {
+  filter: textFilter;
 }
 
 .waitIcon {
@@ -152,6 +156,25 @@
   animation: waitAnimation 1s linear infinite;
 }
 
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 1rem;
+  border-radius: 1rem;
+  background: codeEditorSecondaryColor;
+  color: textColor;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  opacity: 0;
+  transform: opacity 0.1s linear;
+}
+
+.submitButton:enabled:hover .tooltip {
+  opacity: 1;
+}
+
 .executePopup {
   position: absolute;
   top: 50%;
@@ -160,7 +183,7 @@
   border-radius: 12px;
   font-size: 1.5rem;
   transform: translate(-50%, -50%);
-  background: codeEditorColor;
+  background: codeEditorSecondaryColor;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   opacity: 0;
   pointer-events: none;

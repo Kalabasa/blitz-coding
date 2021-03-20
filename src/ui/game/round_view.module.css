@@ -1,5 +1,6 @@
 @value back from "~ui/styles/animation.module.css";
 @value ease from "~ui/styles/animation.module.css";
+@value codeEditorSecondaryColor from "~ui/styles/colors.module.css";
 
 @value introEase: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -67,6 +68,29 @@
   font-size: 1.5rem;
   font-weight: normal;
   text-align: center;
+}
+
+.skipButton {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 1rem;
+  border-radius: 1rem;
+  background: codeEditorSecondaryColor;
+  color: textColor;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  opacity: 0;
+  transform: opacity 0.1s linear;
+  z-index: 1;
+}
+.skipButton:enabled:hover .tooltip {
+  opacity: 1;
 }
 
 .farPrevCard {

@@ -1,4 +1,6 @@
 import { AsyncFunction, Suite } from "code/run";
+import { uuid } from "game/uuid";
+import { minify } from "terser";
 
 function createFunction(
   suite: Suite,
@@ -10,20 +12,21 @@ function createFunction(
 ): AsyncFunction {
   const { funcName, inputNames } = suite;
 
-  const prefix = "_" + Date.now();
+  const prefix = "_" + uuid();
   const inputVars = inputNames.map((name) => "_" + prefix + name);
   const contextVar = prefix + "context";
 
   const thisValue = "{valueOf:function(){return undefined}}";
 
-  const code = `
+  return async (...inputs: any[]) => {
+    const code = `
 try{
 
 with(${contextVar}){
 function ${funcName}(${inputNames.join(",")}){
 
 /* ------ PLAYER CODE START ------ */
-${funcCode}
+${await minifyCode(funcCode)}
 /* ------ PLAYER CODE END ------ */
 
 }
@@ -46,14 +49,13 @@ ${modCleanupCode}
 }
 `;
 
-  console.debug(code);
+    // console.debug(code);
+    const mini = await minifyCode(code);
+    // console.debug(mini);
+    // eslint-disable-next-line no-new-func
+    const fn = detachContext(mini, contextVar, ...inputVars);
 
-  const context = getContext(logger);
-
-  // eslint-disable-next-line no-new-func
-  const fn = detachContext(contextVar, ...inputVars, code);
-
-  return async (...inputs: any[]) => {
+    const context = getContext(logger);
     return await fn(context, ...inputs);
   };
 }
@@ -124,20 +126,21 @@ function flushIFramePool() {
   }
 }
 
-function detachContext(...funcArgs: string[]): AsyncFunction {
-  return (context, ...params: any[]) =>
+function detachContext(
+  code: string,
+  contextVar: string,
+  ...inputVars: string[]
+): AsyncFunction {
+  return (context, ...inputs: any[]) =>
     new Promise((resolve, reject) => {
-      const prefix = "_" + Date.now();
+      const prefix = "_" + uuid();
       const funcName = prefix + "fn";
-      const contextVar = prefix + "context";
-      const paramsVar = prefix + "params";
-      const funcArgList = funcArgs.map((a) => JSON.stringify(a)).join(",");
 
       const html = `
 <body><script>
 document.domain = ${JSON.stringify(document.domain)};
-window.${funcName} = function (${contextVar}, ${paramsVar}) {
-  return new Function(${funcArgList})(${contextVar}, ...${paramsVar});
+window.${funcName} = function (${contextVar}, ${inputVars.join(",")}) {
+  ${code}
 };
 </script></body>
 `;
@@ -147,7 +150,7 @@ window.${funcName} = function (${contextVar}, ${paramsVar}) {
       iframe.onload = () => {
         try {
           const fn = (iframe.contentWindow as any)[funcName];
-          const retVal = fn(context, params);
+          const retVal = fn(context, ...inputs);
           resolve(retVal);
         } catch (error) {
           reject(error);
@@ -158,7 +161,19 @@ window.${funcName} = function (${contextVar}, ${paramsVar}) {
     });
 }
 
-export const Bootstrap = Object.freeze({
+async function minifyCode(code: string): Promise<string> {
+  const mini = await minify(code, {
+    mangle: false,
+    parse: { bare_returns: true },
+    compress: { defaults: false },
+  });
+
+  if (!mini.code) throw new Error("Error processing code");
+
+  return mini.code;
+}
+
+export const Compiler = Object.freeze({
   createFunction,
   generateSetupCode,
 });

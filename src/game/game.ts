@@ -1,7 +1,7 @@
 import { Run } from "code/run";
 import { Generate } from "game/generate";
 import { Mod } from "mods/mod";
-import { Bootstrap } from "game/bootstrap";
+import { Compiler } from "game/compiler";
 import { Difficulty, Round } from "game/types";
 
 export type Game = {
@@ -47,18 +47,18 @@ async function runRound(
       code = "//" + origCode.replaceAll("\n", "\n//") + "\n" + code;
     }
 
-    const fn = Bootstrap.createFunction(
+    const fn = Compiler.createFunction(
       round.suite,
       code,
       round.mods ? Mod.generateSetupCode(round.mods) : "",
       round.mods ? Mod.generateCleanupCode(round.mods) : "",
-      Bootstrap.generateSetupCode(round.suite),
+      Compiler.generateSetupCode(round.suite),
       logger
     );
 
     const result = await Run.cases(fn, round.suite.cases);
 
-    console.debug(result);
+    // console.debug(result);
 
     return {
       success: result.every((run) => run.match),

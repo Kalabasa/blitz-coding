@@ -1,4 +1,5 @@
 // @ts-nocheck
+
 /* eslint-disable */
 let id: string;
 
@@ -57,11 +58,13 @@ const throwAnError = function () {
 /* eslint-enable */
 
 export const libThrowsAnError = `
-var throwsAnError = function(){
-  var id = (()=>([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,a=>(a^Math.random()*16>>a/4).toString(16)))();
-  const fn = ${throwAnError.toString()};
-  Object.defineProperty(fn, id, { value: id });
-  return fn;
-};
-var throws_an_error = throwsAnError;
+var throws_an_error = (function(){
+  var count = 0;
+  return function(){
+    var id = "throws_an_error_" + count++;
+    const fn = ${throwAnError.toString()};
+    Object.defineProperty(fn, id, { value: id });
+    return fn;
+  };
+})();
 `;

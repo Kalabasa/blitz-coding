@@ -115,7 +115,8 @@ export const PuzzleCard = ({
               disabled={submitDisabled || !focus}
               onClick={onClickSubmitButton}
             >
-              <Icon svg={PlaySVG} />
+              <Icon className={styles.playIcon} svg={PlaySVG} />
+              <div className={styles.tooltip}>Ctrl+Enter</div>
             </button>
           )}
         </div>

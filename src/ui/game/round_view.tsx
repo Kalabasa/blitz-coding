@@ -3,6 +3,7 @@ import { Game, RoundResult } from "game/game";
 import { Round } from "game/types";
 import { Mod } from "mods/mod";
 import React, {
+  KeyboardEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -114,6 +115,18 @@ export const RoundView = ({
     timeout(100, () => onRoundEnd("failure"));
   }, [onRoundEnd]);
 
+  const onKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (!event.ctrlKey || event.key !== "]") return;
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      skip();
+    },
+    [skip]
+  );
+
   // lifecycle
   useEffect(() => {
     if (active && roundStep === RoundStep.Play) {
@@ -175,6 +188,8 @@ export const RoundView = ({
         [styles.introMode]: introMode,
         [styles.collectMode]: collectMode,
       })}
+      onKeyPressCapture={onKey}
+      onKeyDownCapture={onKey}
     >
       <div
         className={classNames({
@@ -229,8 +244,12 @@ export const RoundView = ({
         <h2 className={styles.roundCount}>
           Round {roundIndex + 1}/{game.rounds.length}
         </h2>
-        <button onClick={skip} className={styles.gameButton}>
-          Skip
+        <button
+          onClick={skip}
+          className={classNames(styles.gameButton, styles.skipButton)}
+        >
+          <span className={styles.skipButtonLabel}>Skip</span>
+          <span className={styles.tooltip}>Ctrl+]</span>
         </button>
       </div>
 

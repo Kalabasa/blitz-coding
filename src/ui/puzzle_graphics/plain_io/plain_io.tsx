@@ -43,10 +43,10 @@ export const PlainIO = ({
       >
         <span className={styles.resultPrefix}>
           {funcName}(
-          {inputs.map(([, value], i) => (
+          {inputs.map(([name], i) => (
             <Fragment key={i}>
               {i > 0 && <>,</>}
-              {formatValue(value, { style: "shortest" })}
+              {name}
             </Fragment>
           ))}
           )&nbsp;=&nbsp;

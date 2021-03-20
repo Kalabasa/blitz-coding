@@ -2,13 +2,14 @@ import * as acorn from "acorn";
 import * as walk from "acorn-walk";
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
+import { uuid } from "game/uuid";
 import { createModLimitCalls } from "mods/limit_calls/limit_calls";
 import { Mod } from "mods/mod";
 import { formattedFunction, randomInt, rangeCases } from "round_types/utils";
 import { createPlainCaseGridGraphics } from "ui/puzzle_graphics/graphics";
 
 const diceSum = (rollLimit?: number): Round => {
-  const checksumKey = "_" + Date.now() + "diceRoll";
+  const checksumKey = `___${uuid()}diceRoll`;
   const key = randomInt(2, 4);
 
   const { modLimitCalls, limitCalls } = createModLimitCalls(
@@ -91,7 +92,7 @@ type CodeWalkState = { start: number; end: number; insert: string }[];
 
 // TODO Refactor out into general modOverloadOperator(...);
 const modDiceAdditionOverload = (checksumKey: string, key: number): Mod => {
-  const addFunc = "_" + Date.now() + "add";
+  const addFunc = `___${uuid()}add`;
   return {
     hiddenCode: `
 function ${addFunc}(a, b){
