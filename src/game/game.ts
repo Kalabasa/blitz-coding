@@ -47,17 +47,15 @@ async function runRound(
       code = "//" + origCode.replaceAll("\n", "\n//") + "\n" + code;
     }
 
-    const fn = Compiler.createFunction(
+    const fn = await Compiler.createFunction(
       round.suite,
       code,
       round.mods ? Mod.generateSetupCode(round.mods) : "",
       round.mods ? Mod.generateCleanupCode(round.mods) : "",
-      Compiler.generateSetupCode(round.suite),
       logger
     );
 
     const result = await Run.cases(fn, round.suite.cases);
-
     // console.debug(result);
 
     return {

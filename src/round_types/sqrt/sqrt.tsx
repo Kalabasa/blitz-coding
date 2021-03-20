@@ -9,6 +9,7 @@ const sqrt = (
   withMaxRange: boolean,
   withImperfectSquares: boolean,
   noMathSqrt: boolean,
+  noMathPow: boolean,
   noExponentiation: boolean
 ): Round => ({
   time:
@@ -16,8 +17,9 @@ const sqrt = (
     Number(withMaxRange) * 60 +
     Number(withImperfectSquares) * 100 +
     Number(noMathSqrt) * 20 +
+    Number(noMathPow) * 10 +
     Number(noExponentiation) * 10 +
-    Number(noMathSqrt && noExponentiation) * 30,
+    Number(noMathSqrt && noMathPow && noExponentiation) * 30,
   suite: {
     funcName: "sqrt",
     inputNames: ["n"],
@@ -31,6 +33,7 @@ const sqrt = (
   },
   mods: [
     ...(noMathSqrt ? [modBanStaticMethod("Math", "sqrt")] : []),
+    ...(noMathPow ? [modBanStaticMethod("Math", "pow")] : []),
     ...(noExponentiation ? [modBanOperation("**")] : []),
   ],
   Graphics: createPlainCaseGridGraphics(3, withMaxRange ? 1 : 3),
@@ -45,6 +48,7 @@ export const createSqrt: RoundGenerator = {
       difficulty >= Difficulty.Medium,
       difficulty >= Difficulty.Hard,
       Math.random() < 0.95 || difficulty >= Difficulty.Medium,
+      Math.random() < 0.9 || difficulty >= Difficulty.Hard,
       (difficulty >= Difficulty.Medium && Math.random() < 0.8) ||
         difficulty >= Difficulty.Hard,
     ],

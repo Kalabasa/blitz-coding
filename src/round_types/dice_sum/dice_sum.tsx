@@ -18,7 +18,7 @@ const diceSum = (rollLimit?: number): Round => {
   );
 
   return {
-    time: 100,
+    time: 150,
     suite: {
       funcName: "sumDiceTo7",
       inputNames: ["rollDice"],
@@ -123,10 +123,10 @@ function ${addFunc}(a, b){
         BinaryExpression: (node: acorn.Node & any, state, c) => {
           if (node.operator !== "+") return;
 
-          const leftStart = -prologue.length + node.left.start;
-          const leftEnd = -prologue.length + node.left.end;
-          const rightStart = -prologue.length + node.right.start;
-          const rightEnd = -prologue.length + node.right.end;
+          const leftStart = node.left.start;
+          const leftEnd = node.left.end;
+          const rightStart = node.right.start;
+          const rightEnd = node.right.end;
 
           state.push({
             start: leftStart,
@@ -150,10 +150,10 @@ function ${addFunc}(a, b){
         AssignmentExpression: (node: acorn.Node & any, state, c) => {
           if (node.operator !== "+=") return;
 
-          const leftStart = -prologue.length + node.left.start;
-          const leftEnd = -prologue.length + node.left.end;
-          const rightStart = -prologue.length + node.right.start;
-          const rightEnd = -prologue.length + node.right.end;
+          const leftStart = node.left.start;
+          const leftEnd = node.left.end;
+          const rightStart = node.right.start;
+          const rightEnd = node.right.end;
 
           const leftExpr = code.substring(leftStart, leftEnd);
 
@@ -181,7 +181,11 @@ function ${addFunc}(a, b){
       const chars = [...code];
       splices.sort((a, b) => b.start - a.start);
       for (let splice of splices) {
-        chars.splice(splice.start, splice.end - splice.start, ...splice.insert);
+        chars.splice(
+          splice.start - prologue.length,
+          splice.end - splice.start,
+          ...splice.insert
+        );
       }
 
       return chars.join("");

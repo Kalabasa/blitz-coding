@@ -1,32 +1,37 @@
+import * as acorn from "acorn";
+import * as walk from "acorn-walk";
 import { AsyncFunction, Suite } from "code/run";
 import { uuid } from "game/uuid";
 import { minify } from "terser";
 
-function createFunction(
+async function createFunction(
   suite: Suite,
   funcCode: string,
   modCode: string,
   modCleanupCode: string,
-  setupCode: string,
   logger: (...data: any[]) => void = console.log
-): AsyncFunction {
+): Promise<AsyncFunction> {
   const { funcName, inputNames } = suite;
 
   const prefix = "_" + uuid();
   const inputVars = inputNames.map((name) => "_" + prefix + name);
   const contextVar = prefix + "context";
+  const cpointFunc = prefix + "cp";
 
   const thisValue = "{valueOf:function(){return undefined}}";
 
-  return async (...inputs: any[]) => {
-    const code = `
+  let playerCode = funcCode;
+  playerCode = await addCheckpoints(funcCode, `${cpointFunc}()`);
+  // playerCode = await minifyCode(playerCode);
+
+  const code = `
 try{
 
 with(${contextVar}){
 function ${funcName}(${inputNames.join(",")}){
 
 /* ------ PLAYER CODE START ------ */
-${await minifyCode(funcCode)}
+${playerCode}
 /* ------ PLAYER CODE END ------ */
 
 }
@@ -37,7 +42,7 @@ ${modCode}
 /* ------ MODS END ------ */
 
 /* ------ SETUP START ------ */
-${setupCode}
+${generateSetupCode(suite, cpointFunc)}
 /* ------ SETUP END ------ */
 
 return ${funcName}.call(${thisValue},${inputVars.join(",")});
@@ -49,18 +54,20 @@ ${modCleanupCode}
 }
 `;
 
-    // console.debug(code);
-    const mini = await minifyCode(code);
-    // console.debug(mini);
-    // eslint-disable-next-line no-new-func
-    const fn = detachContext(mini, contextVar, ...inputVars);
+  console.debug(code);
+  const mini = await minifyCode(code);
+  console.debug(mini);
+  // eslint-disable-next-line no-new-func
+  const fn = detachContext(mini, contextVar, ...inputVars);
 
-    const context = getContext(logger);
+  const context = getContext(logger);
+
+  return async (...inputs: any[]) => {
     return await fn(context, ...inputs);
   };
 }
 
-function generateSetupCode(suite: Suite): string {
+function generateSetupCode(suite: Suite, cpointFunc: string): string {
   const { funcName } = suite;
 
   return `
@@ -88,6 +95,13 @@ function generateSetupCode(suite: Suite): string {
   ${funcName} = memoize(${funcName});
 })();
 
+var ${cpointFunc} = (function(){
+  var count = 0;
+  return function(){
+    if (count++ > 1e5) throw new Error('Maximum execution time exceeded!');
+  };
+})();
+
 ${funcName}.toString = function(){ return "${funcName}" };
 `;
 }
@@ -112,7 +126,7 @@ function getIFrame(): HTMLIFrameElement {
 
   const iframe = document.createElement("iframe");
   iframe.classList.add("codeRunner");
-  document.body.appendChild(iframe);
+  setTimeout(() => document.body.appendChild(iframe));
   return iframe;
 }
 
@@ -161,19 +175,80 @@ window.${funcName} = function (${contextVar}, ${inputVars.join(",")}) {
     });
 }
 
+type CodeWalkState = { start: number; end: number; insert: string }[];
+
+async function addCheckpoints(
+  code: string,
+  cpointStmt: string
+): Promise<string> {
+  let ast;
+  try {
+    ast = acorn.parse(code, {
+      allowAwaitOutsideFunction: true,
+      allowReturnOutsideFunction: true,
+    });
+  } catch (error) {
+    const { pos, loc } = error;
+    if (pos !== undefined) {
+      if (pos < code.length) {
+        const char = code.charAt(pos);
+        error.message = `Unexpected '${char}' at line ${loc.line}, column ${loc.column}.`;
+      } else {
+        error.message = "Unexpected end of function.";
+      }
+    }
+    throw error;
+  }
+
+  const splices: CodeWalkState = [];
+  splices.push({
+    start: 0,
+    end: 0,
+    insert: cpointStmt + ";",
+  });
+  const visitLoop = (node: acorn.Node & any, state: CodeWalkState) => {
+    state.push({
+      start: node.body.start,
+      end: node.body.start,
+      insert: "{" + cpointStmt + ";",
+    });
+    state.push({
+      start: node.body.end,
+      end: node.body.end,
+      insert: "}",
+    });
+  };
+  walk.simple<CodeWalkState>(
+    ast,
+    {
+      WhileStatement: visitLoop,
+      DoWhileStatement: visitLoop,
+      ForStatement: visitLoop,
+      ForInStatement: visitLoop,
+      ForOfStatement: visitLoop,
+    },
+    undefined,
+    splices
+  );
+
+  const chars = [...code];
+  splices.sort((a, b) => b.start - a.start);
+  for (let splice of splices) {
+    chars.splice(splice.start, splice.end - splice.start, ...splice.insert);
+  }
+
+  return chars.join("");
+}
+
 async function minifyCode(code: string): Promise<string> {
   const mini = await minify(code, {
     mangle: false,
     parse: { bare_returns: true },
     compress: { defaults: false },
   });
-
-  if (!mini.code) throw new Error("Error processing code");
-
-  return mini.code;
+  return mini.code || code;
 }
 
 export const Compiler = Object.freeze({
   createFunction,
-  generateSetupCode,
 });
