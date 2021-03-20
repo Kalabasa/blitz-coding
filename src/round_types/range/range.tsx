@@ -15,7 +15,7 @@ const getRange = (
     inputNames: ["x", "y"],
     cases: rangeCases(0, 15, (i) => {
       const min = randomInt(-10, 10);
-      const max = min + randomInt(0, 20);
+      const max = min + randomInt(0, 10);
 
       const bounds = [min, max];
       const sequence = range(min, max);

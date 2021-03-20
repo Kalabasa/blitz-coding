@@ -54,7 +54,7 @@ const allRoundGens: RoundGenerator[] = [
   createSqrt,
   createTicTacToe,
   createZip,
-];
+]; //.filter((x) => x === createTicTacToe);
 
 export type RoundType<P extends unknown[] = any[]> = {
   fn: (...params: P) => Round;

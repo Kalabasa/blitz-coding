@@ -8,7 +8,7 @@ export const modBanOperation = (...operators: string[]): Mod => ({
   libraryCode: "function ban_operation(){}",
   preprocess: banSyntaxPreCheck(
     {
-      UnaryExpression: (node) => operators.includes(node.operator),
+      // UnaryExpression: (node) => operators.includes(node.operator),
       BinaryExpression: (node) => operators.includes(node.operator),
       AssignmentExpression: (node) => operators.includes(node.operator + "="),
       UpdateExpression: (node) =>

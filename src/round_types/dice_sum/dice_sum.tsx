@@ -65,11 +65,11 @@ const diceSum = (rollLimit?: number): Round => {
 };
 
 export const createDiceSum: RoundGenerator = {
-  minDifficulty: Difficulty.Easy,
+  minDifficulty: Difficulty.Medium,
   weight: 1,
   create: (difficulty: Difficulty) => ({
     fn: diceSum,
-    params: [difficulty <= Difficulty.Easy ? undefined : 8],
+    params: [difficulty <= Difficulty.Medium ? undefined : 8],
   }),
 };
 

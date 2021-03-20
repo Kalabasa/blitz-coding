@@ -19,7 +19,7 @@ const zip = (noLoops: boolean): Round => ({
     }),
   },
   mods: noLoops ? [modBanLoops()] : [],
-  Graphics: createPlainCaseGridGraphics(3, 2),
+  Graphics: createPlainCaseGridGraphics(2, 2),
 });
 
 export const createZip: RoundGenerator = {

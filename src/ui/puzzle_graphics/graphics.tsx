@@ -70,9 +70,9 @@ export function formatValue(value: unknown, opts?: FormatOptions): ReactNode {
     case "string":
       return (
         <>
-          <Sym>‘</Sym>
+          <Sym>'</Sym>
           {value.replace(/\\/g, "\\\\").replace("'", "\\'")}
-          <Sym>’</Sym>
+          <Sym>'</Sym>
         </>
       );
 
@@ -181,7 +181,7 @@ function formatKey(k: string) {
   );
 }
 
-const Sym = ({ children }: PropsWithChildren<{}>) => (
+export const Sym = ({ children }: PropsWithChildren<{}>) => (
   <span className={styles.symbol}>{children}</span>
 );
 

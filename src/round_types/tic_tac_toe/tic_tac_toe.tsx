@@ -1,8 +1,10 @@
 import { RoundGenerator } from "game/generate";
 import { Difficulty, Round } from "game/types";
+import React from "react";
 import { rangeCases, shuffle } from "round_types/utils";
 import {
   createPlainCaseGridGraphics,
+  Sym,
   toFormatString,
 } from "ui/puzzle_graphics/graphics";
 
@@ -14,14 +16,39 @@ const ticTacToe = (): Round => ({
     cases: rangeCases(1, 10, () => {
       const { board, winningMove } = createCase();
 
-      (board as any)[toFormatString] = () =>
-        `${board[0][0]} ${board[0][1]} ${board[0][2]}
-${board[1][0]} ${board[1][1]} ${board[1][2]}
-${board[2][0]} ${board[2][1]} ${board[2][2]}`;
+      (board as any)[toFormatString] = () => (
+        <>
+          <Sym>[[ '</Sym>
+          {board[0][0]}
+          <Sym>', '</Sym>
+          {board[0][1]}
+          <Sym>', '</Sym>
+          {board[0][2]}
+          <Sym>' ],</Sym>
+          <br />
+          <Sym>{' '}[ '</Sym>
+          {board[1][0]}
+          <Sym>', '</Sym>
+          {board[1][1]}
+          <Sym>', '</Sym>
+          {board[1][2]}
+          <Sym>' ],</Sym>
+          <br />
+          <Sym>{' '}[ '</Sym>
+          {board[2][0]}
+          <Sym>', '</Sym>
+          {board[2][1]}
+          <Sym>', '</Sym>
+          {board[2][2]}
+          <Sym>' ]]</Sym>
+        </>
+      );
+
+      const output = `${winningMove[0]}(${winningMove[1]},${winningMove[2]})`;
 
       return {
         inputs: [board],
-        output: winningMove,
+        output,
       };
     }),
   },
@@ -42,7 +69,7 @@ type Cell = Play | "-";
 type Row = [Cell, Cell, Cell];
 type Board = [Row, Row, Row];
 
-function createCase(): { board: Board; winningMove: [number, number] } {
+function createCase(): { board: Board; winningMove: [Play, number, number] } {
   const board: Board = [
     ["-", "-", "-"],
     ["-", "-", "-"],
@@ -53,7 +80,7 @@ function createCase(): { board: Board; winningMove: [number, number] } {
 
   if (!winningMove) throw Error("Logic error");
 
-  board[winningMove[0]][winningMove[1]] = "-";
+  board[winningMove[1]][winningMove[2]] = "-";
 
   return { board, winningMove };
 }
@@ -61,7 +88,7 @@ function createCase(): { board: Board; winningMove: [number, number] } {
 function playUntilWinningMove(
   board: Board,
   play: Play
-): [number, number] | null {
+): [Play, number, number] | null {
   const moves = findMoves(board);
   const winningMoves = [];
   const losingMoves = [];
@@ -83,7 +110,7 @@ function playUntilWinningMove(
   if (winningMoves.length > 1) {
     return null;
   } else if (winningMoves.length === 1 && losingMoves.length === 0) {
-    return winningMoves[0];
+    return [play, ...winningMoves[0]];
   }
 
   for (let move of shuffle(moves)) {

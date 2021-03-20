@@ -56,8 +56,7 @@ export const createSortArray: RoundGenerator = {
     fn: sortArray,
     params: [
       Math.random() < 0.5 || difficulty >= Difficulty.Impossible,
-      (difficulty >= Difficulty.Medium && Math.random() < 0.25) ||
-        difficulty >= Difficulty.Hard,
+      difficulty >= Difficulty.Medium,
       (difficulty >= Difficulty.Hard && Math.random() < 0.2) ||
         difficulty >= Difficulty.Impossible,
     ],

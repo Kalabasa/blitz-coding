@@ -22,7 +22,7 @@ const arithmetic = (
     (noNativeOperations === "operation"
       ? 50
       : noNativeOperations === "includingInverse"
-      ? 100
+      ? 200
       : 0),
   suite: {
     funcName: operation.name,

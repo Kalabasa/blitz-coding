@@ -21,7 +21,8 @@ const listToArray = (): Round => ({
 });
 
 export const createListToArray: RoundGenerator = {
-  minDifficulty: Difficulty.Easy,
+  minDifficulty: Difficulty.Medium,
+  maxDifficulty: Difficulty.Hard,
   weight: 1,
   create: (difficulty: Difficulty) => ({
     fn: listToArray,

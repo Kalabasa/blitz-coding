@@ -157,7 +157,7 @@ function getRemark(score: number, total: number) {
   let choices = [];
   if (score === total) {
     choices = ["Perfect!", "Fantastic!", "Impressive."];
-  } else if (score > total * 0.7) {
+  } else if (score > total * 0.8) {
     choices = [
       "Excellent!",
       "Awesome!",
@@ -166,7 +166,7 @@ function getRemark(score: number, total: number) {
       "Great!",
       "That's great!",
     ];
-  } else if (score > total * 0.4) {
+  } else if (score > total * 0.7) {
     choices = [
       "Good job!",
       "Great job!",
