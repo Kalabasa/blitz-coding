@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/blitz-coding/static/css/main.c216a4cf.chunk.css",
-    "main.js": "/blitz-coding/static/js/main.e8fb1ce1.chunk.js",
-    "main.js.map": "/blitz-coding/static/js/main.e8fb1ce1.chunk.js.map",
+    "main.css": "/blitz-coding/static/css/main.97e857bc.chunk.css",
+    "main.js": "/blitz-coding/static/js/main.eedab71b.chunk.js",
+    "main.js.map": "/blitz-coding/static/js/main.eedab71b.chunk.js.map",
     "runtime-main.js": "/blitz-coding/static/js/runtime-main.20278a2f.js",
     "runtime-main.js.map": "/blitz-coding/static/js/runtime-main.20278a2f.js.map",
-    "static/js/2.db9603ed.chunk.js": "/blitz-coding/static/js/2.db9603ed.chunk.js",
-    "static/js/2.db9603ed.chunk.js.map": "/blitz-coding/static/js/2.db9603ed.chunk.js.map",
+    "static/js/2.0efd3aef.chunk.js": "/blitz-coding/static/js/2.0efd3aef.chunk.js",
+    "static/js/2.0efd3aef.chunk.js.map": "/blitz-coding/static/js/2.0efd3aef.chunk.js.map",
     "index.html": "/blitz-coding/index.html",
-    "static/css/main.c216a4cf.chunk.css.map": "/blitz-coding/static/css/main.c216a4cf.chunk.css.map",
-    "static/js/2.db9603ed.chunk.js.LICENSE.txt": "/blitz-coding/static/js/2.db9603ed.chunk.js.LICENSE.txt",
+    "static/css/main.97e857bc.chunk.css.map": "/blitz-coding/static/css/main.97e857bc.chunk.css.map",
+    "static/js/2.0efd3aef.chunk.js.LICENSE.txt": "/blitz-coding/static/js/2.0efd3aef.chunk.js.LICENSE.txt",
     "static/media/check.c96b7333.svg": "/blitz-coding/static/media/check.c96b7333.svg",
     "static/media/cross.c855feba.svg": "/blitz-coding/static/media/cross.c855feba.svg",
     "static/media/play.e59c612b.svg": "/blitz-coding/static/media/play.e59c612b.svg",
@@ -17,8 +17,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.20278a2f.js",
-    "static/js/2.db9603ed.chunk.js",
-    "static/css/main.c216a4cf.chunk.css",
-    "static/js/main.e8fb1ce1.chunk.js"
+    "static/js/2.0efd3aef.chunk.js",
+    "static/css/main.97e857bc.chunk.css",
+    "static/js/main.eedab71b.chunk.js"
   ]
 }
