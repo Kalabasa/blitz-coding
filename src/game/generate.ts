@@ -8,11 +8,8 @@ import { createSortArray } from "round_types/array_sort/array_sort";
 import { createAverage } from "round_types/average/average";
 import { createCountMultiOccurences } from "round_types/count_multiple_occurences/count_multiple_occurences";
 import { createCountOccurences } from "round_types/count_occurences/count_occurences";
-import { createDiceSum } from "round_types/dice_sum/dice_sum";
 import { createFactorial } from "round_types/factorial/factorial";
 import { createFibonacciSequence } from "round_types/fibonacci/fibonacci";
-import { createHangman } from "round_types/hangman/hangman";
-import { createHigherLower } from "round_types/higher_lower/higher_lower";
 import { createIsEven } from "round_types/is_even/is_even";
 import { createIsPalindrome } from "round_types/is_palindrome/is_palindrome";
 import { createListToArray } from "round_types/list_to_array/list_to_array";
@@ -21,10 +18,8 @@ import { createPower } from "round_types/power/power";
 import { createQuadSequence } from "round_types/quad_sequence/quad_sequence";
 import { createRange } from "round_types/range/range";
 import { createRockPaperScissors } from "round_types/rock_paper_scissors/rock_paper_scissors";
-import { createSparkline } from "round_types/sparkline/sparkline";
 import { createSqrt } from "round_types/sqrt/sqrt";
 import { createReverseString } from "round_types/string_reverse/string_reverse";
-import { createTicTacToe } from "round_types/tic_tac_toe/tic_tac_toe";
 import { createZip } from "round_types/zip/zip";
 
 const allRoundGens: RoundGenerator[] = [
@@ -35,11 +30,11 @@ const allRoundGens: RoundGenerator[] = [
   createAverage,
   createCountMultiOccurences,
   createCountOccurences,
-  createDiceSum,
+  // createDiceSum,
   createFactorial,
   createFibonacciSequence,
-  createHangman,
-  createHigherLower,
+  // createHangman,
+  // createHigherLower,
   createIsEven,
   createIsPalindrome,
   createListToArray,
@@ -50,9 +45,9 @@ const allRoundGens: RoundGenerator[] = [
   createReverseString,
   createRockPaperScissors,
   createSortArray,
-  createSparkline,
+  // createSparkline,
   createSqrt,
-  createTicTacToe,
+  // createTicTacToe,
   createZip,
 ]; //.filter((x) => x === createTicTacToe);
 
